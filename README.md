@@ -20,6 +20,9 @@ make
 sudo make install
 ```
 
+### Windows
+If you are using 32-bit VLC, simply extract [this archive](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.1.0/windows-i686.zip) at `{VLC}/plugins/video_filter/`
+
 ## Usage
 1. Go into advanced preferences: Tools -> Preferences -> Show settings -> All
 2. Enable/Disable the plugin with a checkbox: (in advanced preferences) Video -> Filters -> Pause/Play video on mouse click
