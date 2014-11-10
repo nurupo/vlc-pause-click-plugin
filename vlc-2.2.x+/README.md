@@ -1,0 +1,33 @@
+# Pause Click plugin for VLC
+This plugin allows you to pause/play a video by clicking on the video image.
+
+## Supported versions of VLC
+Tested to work on VLC 2.2.0 and 3.0.0, so supposedly should work on 2.2.x and 3.0.x versions.
+
+## Install
+
+### Windows
+To be added soon.
+
+### Debian
+Get required libraries and tools:
+```bash
+sudo apt-get install build-essential pkg-config libvlccore-dev
+```
+
+Build and install:
+```bash
+make
+sudo make install
+```
+
+Note: because of API change in VLC 2.2.0 this build requires `vlc_interface.h`, which is not present in libvlccore-dev package since it's not considered to be a public header by VLC build system. `vlc_interface.h` that is present here is from the current master branch of VLC (3.0.0). It's highly unlikely, but if the plugin doesn't work, you might need to get `vlc_interface.h` appropriate for your VLC version out of the VLC source tree.
+
+## Usage
+1. Restart VLC after installing the plugin
+2. Go into advanced preferences: Tools -> Preferences -> Show settings -> All
+3. Enable/Disable the plugin with a checkbox: (in advanced preferences) Video -> Filters -> Pause/Play video on mouse click
+4. Enable/Disable the plugin with a checkbox: (in advanced preferences) Interface -> Control Interfaces -> Pause/Play video on mouse click
+5. Restart VLC
+6. Play a video
+7. Click on video picture to pause/play the video

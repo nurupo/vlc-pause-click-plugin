@@ -38,7 +38,6 @@ vlc_module_begin()
     set_description(N_("Pause/Play video on mouse click"))
     set_shortname(N_("Pause click"))
     set_capability("video filter2", 0)
-    // there might be a better place for it
     set_category(CAT_VIDEO)
     set_subcategory(SUBCAT_VIDEO_VFILTER)
     set_callbacks(Open, NULL)

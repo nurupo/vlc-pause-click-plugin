@@ -34,7 +34,7 @@ uninstall:
 	rm -f $(plugindir)/video_filter/libpause_click_plugin.so
 
 clean:
-	rm -f -- libpause_click_plugin.so *.o
+	rm -f -- libpause_click_plugin.so pause_click.o
 
 mostlyclean: clean
 
