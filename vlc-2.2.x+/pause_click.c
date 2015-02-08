@@ -26,6 +26,8 @@
 # define N_(str) (str)
 #endif
 
+#define UNUSED(x) (void)(x)
+
 #include <vlc_common.h>
 #include <vlc_filter.h>
 #include <vlc_interface.h>
@@ -54,6 +56,9 @@ vlc_module_end()
 
 int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mouse_old, const vlc_mouse_t *p_mouse_new)
 {
+    UNUSED(p_filter);
+    UNUSED(p_mouse_out);
+
     if (p_intf != NULL && vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, MOUSE_BUTTON_LEFT)) {
         playlist_t* p_playlist = pl_Get(p_intf);
         playlist_Control(p_playlist, (playlist_Status(p_playlist) == PLAYLIST_RUNNING ? PLAYLIST_PAUSE : PLAYLIST_PLAY), 0);
@@ -65,6 +70,8 @@ int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mou
 
 picture_t *filter(filter_t *p_filter, picture_t *p_pic_in)
 {
+    UNUSED(p_filter);
+
     // don't alter picture
     return p_pic_in;
 }
