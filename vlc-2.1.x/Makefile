@@ -43,6 +43,6 @@ SOURCES = pause_click.c
 $(SOURCES:%.c=%.o): %: pause_click.c
 
 libpause_click_plugin.so: $(SOURCES:%.c=%.o)
-	$(CC) $(LDFLAGS) -shared -o $@ $^
+	$(CC) -shared -o $@ $^ $(LDFLAGS)
 
 .PHONY: all install install-strip uninstall clean mostlyclean
