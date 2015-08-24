@@ -19,9 +19,19 @@ Extract the archive at `{VLC}/plugins/video_filter/`
 If you want to build the plugin binary yourself, take a look at the [build instructions](/common/building.md).
 
 ### OS X
-There are currently no precompiled OS X plugin binaries.
 
-[You are welcome to contribute them though](/common/building.md).
+Download an appropriate archive:
+
+VLC version | 64 bit
+----------- | -------
+2.2.x | [Tested on 2.2.0](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.2.1/vlc-2.2.x-64bit-osx.zip)
+3.0.x | [Not tested](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.2.1/vlc-3.0.x-64bit-osx.zip)
+
+Extract the archive at `/Applications/VLC.app/Contents/MacOS/plugins/video_filter/`
+
+These binaries were kindly contributed by [@xenio](https://github.com/xenio).
+
+If you want to build the plugin binary yourself, take a look at the [build instructions](/common/building.md).
 
 ### Debian
 Get required libraries and tools:
