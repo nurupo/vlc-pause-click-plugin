@@ -8,17 +8,17 @@ VLC_PLUGIN_CFLAGS := $(shell pkg-config --cflags vlc-plugin)
 VLC_PLUGIN_LIBS := $(shell pkg-config --libs vlc-plugin)
 
 libdir = $(PREFIX)/lib
-plugindir = $(libdir)/vlc/plugins
 
-# Only for the O.S. Slackware
+# Slackware uses /usr/lib64 on x86_64
 ARCH=$(shell uname -m)
-slackwareTest=$(shell cat /etc/*-release | grep "Slackware" | wc -l)
 ifeq ($(ARCH), x86_64)
+    slackwareTest=$(shell cat /etc/*-release | grep "Slackware" | wc -l)
     ifneq ($(slackwareTest), 0)
         libdir = $(PREFIX)/lib64
-        plugindir = $(libdir)/vlc/plugins
     endif
 endif
+
+plugindir = $(libdir)/vlc/plugins
 
 override CC += -std=gnu99
 override CPPFLAGS += -DPIC -I. -Isrc
