@@ -40,6 +40,46 @@ int OpenInterface(vlc_object_t *);
 
 intf_thread_t *p_intf = NULL;
 
+#define TO_CHAR(num) ( 'A' + (char)(num) )
+#define FROM_CHAR(c) ((int)( (c) - 'A' ))
+
+static const char buttons[] = {
+    TO_CHAR(MOUSE_BUTTON_LEFT),
+    TO_CHAR(MOUSE_BUTTON_CENTER),
+    TO_CHAR(MOUSE_BUTTON_RIGHT),
+    TO_CHAR(MOUSE_BUTTON_WHEEL_UP),
+    TO_CHAR(MOUSE_BUTTON_WHEEL_DOWN),
+    TO_CHAR(MOUSE_BUTTON_WHEEL_LEFT),
+    TO_CHAR(MOUSE_BUTTON_WHEEL_RIGHT),
+    0
+    };
+
+static const char *const ppsz_buttons_values[] = {
+    buttons,
+    buttons+1,
+    buttons+2,
+    buttons+3,
+    buttons+4,
+    buttons+5,
+    buttons+6
+    };
+
+static const char *const ppsz_buttons_descriptions[] = {
+    "Left Button",
+    "Middle Button",
+    "Right Button",
+    "Scroll Up",
+    "Scroll Down",
+    "Scroll Left",
+    "Scroll Right",
+    };
+
+#define MOUSE_BUTTON "mouse-button-setting"
+#define MOUSE_BUTTON_TEXT N_("Mouse Gesture")
+#define MOUSE_BUTTON_LONGTEXT N_("Defines the mouse gesture that will pause/play the video")
+#define MOUSE_BUTTON_DEFAULT (buttons+1)
+int mouse_btn = MOUSE_BUTTON_CENTER;
+
 vlc_module_begin()
     set_description("Pause/Play video on mouse click")
     set_shortname("Pause-on-click")
@@ -51,6 +91,8 @@ vlc_module_begin()
         set_capability("interface", 0)
         set_category(CAT_INTERFACE)
         set_subcategory(SUBCAT_INTERFACE_CONTROL)
+	add_string(MOUSE_BUTTON, MOUSE_BUTTON_DEFAULT, MOUSE_BUTTON_TEXT, MOUSE_BUTTON_LONGTEXT, false)
+        	change_string_list(ppsz_buttons_values, ppsz_buttons_descriptions)
         set_callbacks(OpenInterface, NULL)
 vlc_module_end()
 
@@ -59,7 +101,7 @@ int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mou
     UNUSED(p_filter);
     UNUSED(p_mouse_out);
 
-    if (p_intf != NULL && vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, MOUSE_BUTTON_LEFT)) {
+    if (p_intf != NULL && vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, mouse_btn)) {
         playlist_t* p_playlist = pl_Get(p_intf);
         playlist_Control(p_playlist, (playlist_Status(p_playlist) == PLAYLIST_RUNNING ? PLAYLIST_PAUSE : PLAYLIST_PLAY), 0);
     }
@@ -89,6 +131,10 @@ int OpenFilter(vlc_object_t *p_this)
 int OpenInterface(vlc_object_t *p_this)
 {
     p_intf = (intf_thread_t*) p_this;
+
+    char* psz_btn = var_CreateGetStringCommand(p_intf, MOUSE_BUTTON);
+    mouse_btn = FROM_CHAR(psz_btn[0]);
+    free(psz_btn);
 
     return VLC_SUCCESS;
 }
