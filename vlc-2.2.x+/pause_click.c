@@ -40,13 +40,13 @@
 #define FROM_CHAR(c) ( (int)( (c) - 'A' ) )
 
 #define MOUSE_BUTTON_LIST \
-    SELECT_COLON("Left Button",    MOUSE_BUTTON_LEFT,			0), \
-    SELECT_COLON("Middle Button",  MOUSE_BUTTON_CENTER,			1), \
-    SELECT_COLON("Right Button",   MOUSE_BUTTON_RIGHT,			2), \
-    SELECT_COLON("Scroll Up",      MOUSE_BUTTON_WHEEL_UP,		3), \
-    SELECT_COLON("Scroll Down",    MOUSE_BUTTON_WHEEL_DOWN,		4), \
-    SELECT_COLON("Scroll Left",    MOUSE_BUTTON_WHEEL_LEFT,		5), \
-    SELECT_COLON("Scroll Right",   MOUSE_BUTTON_WHEEL_RIGHT,	6)
+    SELECT_COLON("Left Button",    MOUSE_BUTTON_LEFT,        0), \
+    SELECT_COLON("Middle Button",  MOUSE_BUTTON_CENTER,      1), \
+    SELECT_COLON("Right Button",   MOUSE_BUTTON_RIGHT,       2), \
+    SELECT_COLON("Scroll Up",      MOUSE_BUTTON_WHEEL_UP,    3), \
+    SELECT_COLON("Scroll Down",    MOUSE_BUTTON_WHEEL_DOWN,  4), \
+    SELECT_COLON("Scroll Left",    MOUSE_BUTTON_WHEEL_LEFT,  5), \
+    SELECT_COLON("Scroll Right",   MOUSE_BUTTON_WHEEL_RIGHT, 6)
 
 #define SELECT_COLON(NAME, VALUE, INDEX) NAME
 static const char *const mouse_button_names[] = { MOUSE_BUTTON_LIST };
