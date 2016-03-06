@@ -90,7 +90,6 @@ vlc_module_end()
 
 int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mouse_old, const vlc_mouse_t *p_mouse_new)
 {
-    UNUSED(p_filter);
     UNUSED(p_mouse_out);
 
     // we don't want to process anything if no mouse button was clicked
