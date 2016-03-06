@@ -105,9 +105,11 @@ int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mou
     int mouse_button = FROM_CHAR(mouse_button_value[0]);
     free(mouse_button_value);
 
-    if (p_intf != NULL && vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, mouse_button)) {
+    if (p_intf != NULL &&
+            (vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, mouse_button) || p_mouse_new->b_double_click)) {
         playlist_t* p_playlist = pl_Get(p_intf);
-        playlist_Control(p_playlist, (playlist_Status(p_playlist) == PLAYLIST_RUNNING ? PLAYLIST_PAUSE : PLAYLIST_PLAY), 0);
+        playlist_Control(p_playlist,
+                         (playlist_Status(p_playlist) == PLAYLIST_RUNNING ? PLAYLIST_PAUSE : PLAYLIST_PLAY), 0);
     }
 
     // don't propagate any mouse change
