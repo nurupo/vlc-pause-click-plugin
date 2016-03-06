@@ -26,8 +26,6 @@
 # define N_(str) (str)
 #endif
 
-#define UNUSED(x) (void)(x)
-
 #include <vlc_common.h>
 #include <vlc_filter.h>
 #include <vlc_interface.h>
@@ -35,73 +33,80 @@
 #include <vlc_playlist.h>
 #include <vlc_plugin.h>
 
+
+#define UNUSED(x) (void)(x)
+
+#define TO_CHAR(num) ( 'A' + (char)(num) )
+#define FROM_CHAR(c) ( (int)( (c) - 'A' ) )
+
+#define MOUSE_BUTTON_LIST \
+    SELECT_COLON("Left Button",    MOUSE_BUTTON_LEFT),       \
+    SELECT_COLON("Middle Button",  MOUSE_BUTTON_CENTER),     \
+    SELECT_COLON("Right Button",   MOUSE_BUTTON_RIGHT),      \
+    SELECT_COLON("Scroll Up",      MOUSE_BUTTON_WHEEL_UP),   \
+    SELECT_COLON("Scroll Down",    MOUSE_BUTTON_WHEEL_DOWN), \
+    SELECT_COLON("Scroll Left",    MOUSE_BUTTON_WHEEL_LEFT), \
+    SELECT_COLON("Scroll Right",   MOUSE_BUTTON_WHEEL_RIGHT)
+
+#define SELECT_COLON(NAME, VALUE) NAME
+static const char *const mouse_button_names[] = { MOUSE_BUTTON_LIST };
+#undef SELECT_COLON
+
+#define SELECT_COLON(NAME, VALUE) TO_CHAR(VALUE)
+static const char mouse_button_values_string[] = { MOUSE_BUTTON_LIST , 0 };
+#undef SELECT_COLON
+
+#define SELECT_COLON(NAME, VALUE) mouse_button_values_string + VALUE
+static const char *const mouse_button_values[] = { MOUSE_BUTTON_LIST };
+#undef SELECT_COLON
+
+#define MOUSE_BUTTON_SETTING "mouse-button-setting"
+#define MOUSE_BUTTON_DEFAULT mouse_button_values_string // MOUSE_BUTTON_LEFT
+
+
 int OpenFilter(vlc_object_t *);
 int OpenInterface(vlc_object_t *);
 
 intf_thread_t *p_intf = NULL;
 
-#define TO_CHAR(num) ( 'A' + (char)(num) )
-#define FROM_CHAR(c) ((int)( (c) - 'A' ))
-
-static const char buttons[] = {
-    TO_CHAR(MOUSE_BUTTON_LEFT),
-    TO_CHAR(MOUSE_BUTTON_CENTER),
-    TO_CHAR(MOUSE_BUTTON_RIGHT),
-    TO_CHAR(MOUSE_BUTTON_WHEEL_UP),
-    TO_CHAR(MOUSE_BUTTON_WHEEL_DOWN),
-    TO_CHAR(MOUSE_BUTTON_WHEEL_LEFT),
-    TO_CHAR(MOUSE_BUTTON_WHEEL_RIGHT),
-    0
-    };
-
-static const char *const ppsz_buttons_values[] = {
-    buttons,
-    buttons+1,
-    buttons+2,
-    buttons+3,
-    buttons+4,
-    buttons+5,
-    buttons+6
-    };
-
-static const char *const ppsz_buttons_descriptions[] = {
-    "Left Button",
-    "Middle Button",
-    "Right Button",
-    "Scroll Up",
-    "Scroll Down",
-    "Scroll Left",
-    "Scroll Right",
-    };
-
-#define MOUSE_BUTTON "mouse-button-setting"
-#define MOUSE_BUTTON_TEXT N_("Mouse Gesture")
-#define MOUSE_BUTTON_LONGTEXT N_("Defines the mouse gesture that will pause/play the video")
-#define MOUSE_BUTTON_DEFAULT (buttons+1)
-int mouse_btn = MOUSE_BUTTON_CENTER;
 
 vlc_module_begin()
     set_description("Pause/Play video on mouse click")
-    set_shortname("Pause-on-click")
+    set_shortname("Pause click")
     set_capability("video filter2", 0)
     set_category(CAT_VIDEO)
     set_subcategory(SUBCAT_VIDEO_VFILTER)
     set_callbacks(OpenFilter, NULL)
+    add_string(MOUSE_BUTTON_SETTING, MOUSE_BUTTON_DEFAULT, "Mouse Button",
+               "Defines the mouse button that will pause/play the video", false)
+    change_string_list(mouse_button_values, mouse_button_names)
         add_submodule()
         set_capability("interface", 0)
         set_category(CAT_INTERFACE)
         set_subcategory(SUBCAT_INTERFACE_CONTROL)
-	add_string(MOUSE_BUTTON, MOUSE_BUTTON_DEFAULT, MOUSE_BUTTON_TEXT, MOUSE_BUTTON_LONGTEXT, false)
-        	change_string_list(ppsz_buttons_values, ppsz_buttons_descriptions)
         set_callbacks(OpenInterface, NULL)
 vlc_module_end()
+
 
 int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mouse_old, const vlc_mouse_t *p_mouse_new)
 {
     UNUSED(p_filter);
     UNUSED(p_mouse_out);
 
-    if (p_intf != NULL && vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, mouse_btn)) {
+    // we don't want to process anything if no mouse button was clicked
+    if (p_mouse_new->i_pressed == 0 && !p_mouse_new->b_double_click) {
+        return VLC_EGENERIC;
+    }
+
+    // get mouse button from settings. updates if user changes the setting
+    char *mouse_button_value = var_InheritString(p_filter, MOUSE_BUTTON_SETTING);
+    if (mouse_button_value == NULL) {
+        return VLC_EGENERIC;
+    }
+    int mouse_button = FROM_CHAR(mouse_button_value[0]);
+    free(mouse_button_value);
+
+    if (p_intf != NULL && vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, mouse_button)) {
         playlist_t* p_playlist = pl_Get(p_intf);
         playlist_Control(p_playlist, (playlist_Status(p_playlist) == PLAYLIST_RUNNING ? PLAYLIST_PAUSE : PLAYLIST_PLAY), 0);
     }
@@ -131,10 +136,6 @@ int OpenFilter(vlc_object_t *p_this)
 int OpenInterface(vlc_object_t *p_this)
 {
     p_intf = (intf_thread_t*) p_this;
-
-    char* psz_btn = var_CreateGetStringCommand(p_intf, MOUSE_BUTTON);
-    mouse_btn = FROM_CHAR(psz_btn[0]);
-    free(psz_btn);
 
     return VLC_SUCCESS;
 }
