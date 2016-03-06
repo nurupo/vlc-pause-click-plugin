@@ -40,25 +40,25 @@
 #define FROM_CHAR(c) ( (int)( (c) - 'A' ) )
 
 #define MOUSE_BUTTON_LIST \
-    SELECT_COLON("Left Button",    MOUSE_BUTTON_LEFT,        0), \
-    SELECT_COLON("Middle Button",  MOUSE_BUTTON_CENTER,      1), \
-    SELECT_COLON("Right Button",   MOUSE_BUTTON_RIGHT,       2), \
-    SELECT_COLON("Scroll Up",      MOUSE_BUTTON_WHEEL_UP,    3), \
-    SELECT_COLON("Scroll Down",    MOUSE_BUTTON_WHEEL_DOWN,  4), \
-    SELECT_COLON("Scroll Left",    MOUSE_BUTTON_WHEEL_LEFT,  5), \
-    SELECT_COLON("Scroll Right",   MOUSE_BUTTON_WHEEL_RIGHT, 6)
+    SELECT_COLUMN("Left Button",    MOUSE_BUTTON_LEFT,        0), \
+    SELECT_COLUMN("Middle Button",  MOUSE_BUTTON_CENTER,      1), \
+    SELECT_COLUMN("Right Button",   MOUSE_BUTTON_RIGHT,       2), \
+    SELECT_COLUMN("Scroll Up",      MOUSE_BUTTON_WHEEL_UP,    3), \
+    SELECT_COLUMN("Scroll Down",    MOUSE_BUTTON_WHEEL_DOWN,  4), \
+    SELECT_COLUMN("Scroll Left",    MOUSE_BUTTON_WHEEL_LEFT,  5), \
+    SELECT_COLUMN("Scroll Right",   MOUSE_BUTTON_WHEEL_RIGHT, 6)
 
-#define SELECT_COLON(NAME, VALUE, INDEX) NAME
+#define SELECT_COLUMN(NAME, VALUE, INDEX) NAME
 static const char *const mouse_button_names[] = { MOUSE_BUTTON_LIST };
-#undef SELECT_COLON
+#undef SELECT_COLUMN
 
-#define SELECT_COLON(NAME, VALUE, INDEX) TO_CHAR(VALUE)
+#define SELECT_COLUMN(NAME, VALUE, INDEX) TO_CHAR(VALUE)
 static const char mouse_button_values_string[] = { MOUSE_BUTTON_LIST , 0 };
-#undef SELECT_COLON
+#undef SELECT_COLUMN
 
-#define SELECT_COLON(NAME, VALUE, INDEX) mouse_button_values_string + INDEX
+#define SELECT_COLUMN(NAME, VALUE, INDEX) mouse_button_values_string + INDEX
 static const char *const mouse_button_values[] = { MOUSE_BUTTON_LIST };
-#undef SELECT_COLON
+#undef SELECT_COLUMN
 
 #define MOUSE_BUTTON_SETTING "mouse-button-setting"
 #define MOUSE_BUTTON_DEFAULT mouse_button_values_string // MOUSE_BUTTON_LEFT
