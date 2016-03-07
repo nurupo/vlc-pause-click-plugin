@@ -34,7 +34,6 @@ before_script:
 script:
   - if [ "$TARGET" = "LINUX" ] && [ "$VLC_VERSION" = "2.1" ]; then cd vlc-2.1.x && sudo make install && cd ..; fi
   - if [ "$TARGET" = "LINUX" ] && [ "$VLC_VERSION" = "2.2" ]; then cd vlc-2.2.x+ && sudo make install && cd ..; fi
-  - if [ "$TARGET" = "WINDOWS" ]; then mkdir build; fi
   - if [ "$TARGET" = "WINDOWS" ]; then sudo docker run --rm -v `pwd`:/repo -v `pwd`/build:/build vlc-pause-click-plugin-windows-build; fi
   - if [ "$TARGET" = "WINDOWS" ]; then tree build -s --si --du; fi
-  - if [ "$TARGET" = "WINDOWS" ] && [ $(find ./build -type f | wc -l) != "2" ]; then false; fi
+  - if [ "$TARGET" = "WINDOWS" ] && [ $(find ./build -name "*.dll" | wc -l) != "2" ]; then false; fi
