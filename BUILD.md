@@ -2,7 +2,7 @@
 
 ### Introduction
 
-If instead of using [the precompiled plugin binaries](/releases) you want to build them yourself, you can follow these instructions on building the plugin.
+If instead of using [the precompiled plugin binaries](https://github.com/nurupo/vlc-pause-click-plugin/releases) you want to build them yourself, you can follow these instructions on building the plugin.
 
 Note that [there is a Dockerfile](./docker) that fully automates building for Windows described in these instructions.
 

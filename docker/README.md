@@ -2,7 +2,7 @@
 
 ### Intro
 
-It's a lot easier to build Windows plugin binaries using Docker than following [the build instructions](../build.md), as everything is already automated for you.
+It's a lot easier to build Windows plugin binaries using Docker than following [the build instructions](../BUILD.md), as everything is already automated for you.
 That's also the way I build Windows binaries that I release.
 
 The Dockerfile provided in this directory sets up an image that will build all versions of the plugin: 2.1.x and 2.2.x, both 32-bit and 64-bit ones.
