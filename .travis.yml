@@ -15,7 +15,6 @@ env:
   - TARGET=LINUX VLC_VERSION=2.2
   - TARGET=WINDOWS VLC_VERSION=2.1
   - TARGET=WINDOWS VLC_VERSION=2.2
-  - TARGET=WINDOWS VLC_VERSION=3.0
 
 before_script:
   - if [ "$TARGET" = "LINUX" ] && [ "$VLC_VERSION" = "2.2" ]; then sudo add-apt-repository ppa:mc3man/trusty-media -y; fi
@@ -25,7 +24,6 @@ before_script:
   - if [ "$TARGET" = "WINDOWS" ]; then cd common/building/docker/ && sed -i "s/build /#build /" script.sh ;fi
   - if [ "$TARGET" = "WINDOWS" ] && [ "$VLC_VERSION" = "2.1" ]; then printf "\nbuild 2.1.0-git i686-w64-mingw32\nbuild 2.1.0-git x86_64-w64-mingw32\n" >> script.sh ;fi
   - if [ "$TARGET" = "WINDOWS" ] && [ "$VLC_VERSION" = "2.2" ]; then printf "\nbuild 2.2.0-git i686-w64-mingw32\nbuild 2.2.0-git x86_64-w64-mingw32\n" >> script.sh ;fi
-  - if [ "$TARGET" = "WINDOWS" ] && [ "$VLC_VERSION" = "3.0" ]; then printf "\nbuild 81c850e46eb818ab4dd64cc751ca90c8b458b4a4 i686-w64-mingw32\nbuild 81c850e46eb818ab4dd64cc751ca90c8b458b4a4 x86_64-w64-mingw32\n" >> script.sh ;fi
   - if [ "$TARGET" = "WINDOWS" ]; then cat script.sh ; fi
   - if [ "$TARGET" = "WINDOWS" ]; then chmod +x script.sh ; fi
   - if [ "$TARGET" = "WINDOWS" ]; then sudo docker build -t vlc-pause-click-plugin-windows-build . ; fi

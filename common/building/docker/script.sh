@@ -25,11 +25,6 @@ build()
         printf "\nlibpause_click_plugin_la_SOURCES = pause_click.c\nlibpause_click_plugin_la_CFLAGS = \$(AM_CFLAGS)\nlibpause_click_plugin_la_LIBADD = \$(AM_LIBADD)\nvideo_filter_LTLIBRARIES += libpause_click_plugin.la\n" >> Modules.am
         TARGET="/build/2.2.x"
         PREFIX="modules/video_filter/.libs/"
-    else
-        cp /repo/vlc-2.2.x+/pause_click.c .
-        printf "\nlibpause_click_plugin_la_SOURCES = video_filter/pause_click.c\nlibpause_click_plugin_la_CFLAGS = \$(AM_CFLAGS)\nlibpause_click_plugin_la_LIBADD = \$(AM_LIBADD)\nvideo_filter_LTLIBRARIES += libpause_click_plugin.la\n" >> Makefile.am
-        TARGET="/build/3.0.x"
-        PREFIX="modules/.libs/"
     fi
 
     cd -
@@ -60,6 +55,3 @@ build 2.1.0-git x86_64-w64-mingw32
 
 build 2.2.0-git i686-w64-mingw32
 build 2.2.0-git x86_64-w64-mingw32
-
-build 81c850e46eb818ab4dd64cc751ca90c8b458b4a4 i686-w64-mingw32
-build 81c850e46eb818ab4dd64cc751ca90c8b458b4a4 x86_64-w64-mingw32

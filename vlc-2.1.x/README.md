@@ -13,7 +13,7 @@ VLC version | 32 bit | 64 bit
 ----------- | ------ | -------
 2.1.x | [Tested on 2.1.5](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.0/vlc-2.1.x-32bit-win.zip) | [Tested on 2.1.5](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.0/vlc-2.1.x-64bit-win.zip)
 
-Extract the archive at `{VLC}/plugins/video_filter/`
+Extract the archive at `{VLC}\plugins\video_filter\`, where `{VLC}` stands for the directory the VLC was installed to, for example `C:\Program Files (x86)\VideoLAN\VLC\`.
 
 If you want to build the plugin binary yourself, take a look at the [build instructions](/common/building/).
 
@@ -34,7 +34,7 @@ make
 sudo make install
 ```
 
-If those instructions don't work for you (perhaps you are using a non-Debian-derived Linux distribuion or don't have `libvlccore` available), [there is another way to build the plugin binary](/common/building/).
+If these instructions don't work for you (perhaps you are using a non-Debian-derived Linux distribuion or don't have `libvlccore` available), [there is another way to build the plugin binary](/common/building/).
 
 ## Usage
 1. Restart VLC to load the newly added plugin
