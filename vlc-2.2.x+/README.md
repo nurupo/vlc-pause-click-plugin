@@ -53,11 +53,11 @@ It's highly unlikely, but if the plugin for some doesn't work, you might need to
 If these instructions don't work for you (perhaps you are using a non-Debian-derived Linux distribuion or don't have `libvlccore` available), [there is another way to build the plugin binary](/BUILD.md).
 
 ## Usage
-1. Restart VLC to load the newly added plugin
-2. Go into advanced preferences: Tools -> Preferences -> Show settings -> All
-3. Enable/Disable the plugin with a checkbox: (in advanced preferences) Video -> Filters -> Pause/Play video on mouse click
-4. Enable/Disable the plugin with a checkbox: (in advanced preferences) Interface -> Control Interfaces -> Pause/Play video on mouse click
-5. Change mouse button to the one you want: (in advanced preferences) Video -> Filters -> Pause click -> Mouse Button
-6. Restart VLC for settings to take place
+1. Restart VLC to load the newly added plugin [[screenshot]](http://i.imgur.com/6oTRtD8.png)
+2. Go into advanced preferences: Tools -> Preferences -> Show settings -> All [[screenshot]](http://i.imgur.com/ONLskiX.png) [[screenshot]](http://i.imgur.com/V7ql7HR.png)
+3. Enable/Disable the plugin with a checkbox: (in advanced preferences) Interface -> Control Interfaces -> Pause/Play video on mouse click [[screenshot]](http://i.imgur.com/aMkGRRK.png)
+4. Enable/Disable the plugin with a checkbox: (in advanced preferences) Video -> Filters -> Pause/Play video on mouse click [[screenshot]](http://i.imgur.com/U5TZpDp.png)
+5. Change mouse button to the one you want: (in advanced preferences) Video -> Filters -> Pause click -> Mouse Button [[screenshot]](http://i.imgur.com/T5yp0jw.png)
+6. Restart VLC for settings to take place [[screenshot]](http://i.imgur.com/6oTRtD8.png)
 7. Play a video
 8. Click on video picture to pause/play the video
