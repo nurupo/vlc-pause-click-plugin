@@ -21,7 +21,7 @@ before_script:
   - sudo apt-get update -qq
   - if [ "$TARGET" = "LINUX" ]; then sudo apt-get install vlc pkg-config libvlccore-dev -qq; fi
   - if [ "$TARGET" = "WINDOWS" ]; then sudo apt-get install tree -qq; fi
-  - if [ "$TARGET" = "WINDOWS" ]; then cd common/building/docker/ && sed -i "s/build /#build /" script.sh ;fi
+  - if [ "$TARGET" = "WINDOWS" ]; then cd docker/ && sed -i "s/build /#build /" script.sh ;fi
   - if [ "$TARGET" = "WINDOWS" ] && [ "$VLC_VERSION" = "2.1" ]; then printf "\nbuild 2.1.0-git i686-w64-mingw32\nbuild 2.1.0-git x86_64-w64-mingw32\n" >> script.sh ;fi
   - if [ "$TARGET" = "WINDOWS" ] && [ "$VLC_VERSION" = "2.2" ]; then printf "\nbuild 2.2.0-git i686-w64-mingw32\nbuild 2.2.0-git x86_64-w64-mingw32\n" >> script.sh ;fi
   - if [ "$TARGET" = "WINDOWS" ]; then cat script.sh ; fi

@@ -15,11 +15,11 @@ VLC version | 32 bit | 64 bit
 
 Extract the archive at `{VLC}\plugins\video_filter\`, where `{VLC}` stands for the directory the VLC was installed to, for example `C:\Program Files (x86)\VideoLAN\VLC\`.
 
-If you want to build the plugin binary yourself, take a look at the [build instructions](/common/building/).
+If you want to build the plugin binary yourself, take a look at the [build instructions](/BUILD.md).
 
 ### OS X
 
-***OS X plugin is outdated, we are looking for someone [to contribute it](/common/building/).***
+***OS X plugin is outdated, we are looking for someone [to contribute it](/BUILD.md).***
 
 Download an appropriate archive:
 
@@ -31,7 +31,7 @@ Extract the archive at `/Applications/VLC.app/Contents/MacOS/plugins/video_filte
 
 This plugin binary was kindly contributed by [@xenio](https://github.com/xenio).
 
-If you want to build the plugin binary yourself, take a look at the [build instructions](/common/building/).
+If you want to build the plugin binary yourself, take a look at the [build instructions](/BUILD.md).
 
 ### Debian
 Get required libraries and tools:
@@ -50,7 +50,7 @@ Meaning that the plugin won't build without that file present.
 I have fixed the issue by simply copying `vlc_interface.h` from VLC's repository in this repository.
 It's highly unlikely, but if the plugin for some doesn't work, you might need to get `vlc_interface.h` appropriate for your VLC version out of the VLC repository and try rebuilding the plugin with that.
 
-If these instructions don't work for you (perhaps you are using a non-Debian-derived Linux distribuion or don't have `libvlccore` available), [there is another way to build the plugin binary](/common/building/).
+If these instructions don't work for you (perhaps you are using a non-Debian-derived Linux distribuion or don't have `libvlccore` available), [there is another way to build the plugin binary](/BUILD.md).
 
 ## Usage
 1. Restart VLC to load the newly added plugin

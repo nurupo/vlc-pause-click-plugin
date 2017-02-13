@@ -15,12 +15,12 @@ VLC version | 32 bit | 64 bit
 
 Extract the archive at `{VLC}\plugins\video_filter\`, where `{VLC}` stands for the directory the VLC was installed to, for example `C:\Program Files (x86)\VideoLAN\VLC\`.
 
-If you want to build the plugin binary yourself, take a look at the [build instructions](/common/building/).
+If you want to build the plugin binary yourself, take a look at the [build instructions](/BUILD.md).
 
 ### OS X
 There are currently no precompiled OS X plugin binaries.
 
-[You are welcome to contribute them though](/common/building/).
+[You are welcome to contribute them though](/BUILD.md).
 
 ### Debian
 Get required libraries and tools:
@@ -34,7 +34,7 @@ make
 sudo make install
 ```
 
-If these instructions don't work for you (perhaps you are using a non-Debian-derived Linux distribuion or don't have `libvlccore` available), [there is another way to build the plugin binary](/common/building/).
+If these instructions don't work for you (perhaps you are using a non-Debian-derived Linux distribuion or don't have `libvlccore` available), [there is another way to build the plugin binary](/BUILD.md).
 
 ## Usage
 1. Restart VLC to load the newly added plugin
