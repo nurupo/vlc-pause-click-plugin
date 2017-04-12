@@ -11,7 +11,7 @@ Download an appropriate archive:
 
 VLC version | 32 bit | 64 bit
 ----------- | ------ | -------
-2.2.x | [Tested on 2.2.0](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.0/vlc-2.2.x-32bit-win.zip) | [Tested on 2.2.0](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.0/vlc-2.2.x-64bit-win.zip)
+2.2.x | [Tested on 2.2.0](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.1/vlc-2.2.x-32bit-win.zip) | [Tested on 2.2.0](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.1/vlc-2.2.x-64bit-win.zip)
 
 Extract the archive at `{VLC}\plugins\video_filter\`, where `{VLC}` stands for the directory the VLC was installed to, for example `C:\Program Files (x86)\VideoLAN\VLC\`.
 
