@@ -1,6 +1,21 @@
 # Pause Click plugin for VLC
 This plugin allows you to pause/play a video by clicking on the video image.
 
+## Table of contents
+
+- [Supported versions of VLC](#supported-versions-of-vlc)
+- [Install](#install)
+  - [Windows](#windows)
+  - [OS X](#os-x)
+  - [Linux](#linux)
+    - [Debian](#debian)
+    - [Arch Linux](#arch-linux)
+- [Usage](#usage)
+- [Troubleshooting](#troubleshooting)
+  - [I don't see any plugin-related options described in Usage instructions](#i-dont-see-any-plugin-related-options-described-in-usage-instructions)
+  - [I do see the plugin-related options described in Usage instructions, but the plugin still doesn't work](#i-do-see-the-plugin-related-options-described-in-usage-instructions-but-the-plugin-still-doesnt-work)
+
+
 ## Supported versions of VLC
 Tested to work on VLC 2.2.0, so supposedly should work on 2.2.x versions.
 
@@ -33,7 +48,10 @@ This plugin binary was kindly contributed by [@xenio](https://github.com/xenio).
 
 If you want to build the plugin binary yourself, take a look at the [build instructions](/BUILD.md).
 
-### Debian
+
+### Linux
+
+#### Debian
 Get required libraries and tools:
 ```bash
 sudo apt-get install build-essential pkg-config libvlccore-dev
@@ -52,6 +70,9 @@ It's highly unlikely, but if the plugin for some doesn't work, you might need to
 
 If these instructions don't work for you (perhaps you are using a non-Debian-derived Linux distribuion or don't have `libvlccore` available), [there is another way to build the plugin binary](/BUILD.md).
 
+#### Arch Linux
+There is a `vlc-pause-click-plugin` package [available](https://aur.archlinux.org/packages/vlc-pause-click-plugin/) in the AUR repository.
+
 ## Usage
 1. Restart VLC to load the newly added plugin [[screenshot]](http://i.imgur.com/6oTRtD8.png)
 2. Go into advanced preferences: Tools -> Preferences -> Show settings -> All [[screenshot]](http://i.imgur.com/ONLskiX.png) [[screenshot]](http://i.imgur.com/V7ql7HR.png)
@@ -61,3 +82,14 @@ If these instructions don't work for you (perhaps you are using a non-Debian-der
 6. Restart VLC for settings to take place [[screenshot]](http://i.imgur.com/6oTRtD8.png)
 7. Play a video
 8. Click on video picture to pause/play the video
+
+## Troubleshooting
+
+### I don't see any plugin-related options described in [Usage](#usage) instructions
+
+- Make sure to restart VLC after you have put the plugin `.dll` (Widnows) or `.so` (Linux) or `.dylib` (OS X) in the appropriate directory.
+- Make sure you have downloaded the appropriate version of the plugin for the VLC you are trying to use it with. Plugin's version and bitness should match the version and bitness of the VLC you are trying to use the plugin with. The plugin bitness is has nothing to do with the operation system bintess whatsoever.
+
+### I do see the plugin-related options described in [Usage](#usage) instructions, but the plugin still doesn't work
+
+- Double-check that you have followed [Usage](#usage) instructions closely, especially 3rd and 4th points. Look at the screenshots. If the issue persists, open an Issue in this repository and I will try to help.
