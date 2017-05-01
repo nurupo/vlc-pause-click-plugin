@@ -69,7 +69,7 @@ There is a `vlc-pause-click-plugin` package [available](https://aur.archlinux.or
 ### I don't see any plugin-related options described in [Usage](#usage) instructions
 
 - Make sure to restart VLC after you have put the plugin `.dll` (Widnows) or `.so` (Linux) or `.dylib` (OS X) in the appropriate directory.
-- Make sure you have downloaded the appropriate version of the plugin for the VLC you are trying to use it with. Plugin's version and bitness should match the version and bitness of the VLC you are trying to use the plugin with. The plugin bitness is has nothing to do with the operation system bintess whatsoever.
+- Make sure you have downloaded the appropriate version of the plugin for the VLC you are trying to use it with. Plugin's version and bitness should match the version and bitness of the VLC you are trying to use the plugin with. Plugin's bitness has nothing to do with the operation system bintess. For example, if use 32-bit VLC, it doesn't matter whether your Windows is 32-bit or 64-bit, you should use 32-bit version of the plugin, because it matches the bitness of the VLC you use.
 
 ### I do see the plugin-related options described in [Usage](#usage) instructions, but the plugin still doesn't work
 
