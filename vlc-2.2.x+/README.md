@@ -9,9 +9,9 @@ Tested to work on VLC 2.2.0, so supposedly should work on 2.2.x versions.
 ### Windows
 Download an appropriate archive:
 
-VLC version | 32 bit | 64 bit
+Version/Bitness | VLC 32 bit | VLC 64 bit
 ----------- | ------ | -------
-2.2.x | [Tested on 2.2.0](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.1/vlc-2.2.x-32bit-win.zip) | [Tested on 2.2.0](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.1/vlc-2.2.x-64bit-win.zip)
+VLC 2.2.x | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.1/vlc-2.2.x-32bit-win.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.1/vlc-2.2.x-64bit-win.zip)
 
 Extract the archive at `{VLC}\plugins\video_filter\`, where `{VLC}` stands for the directory the VLC was installed to, for example `C:\Program Files (x86)\VideoLAN\VLC\`.
 
@@ -23,9 +23,9 @@ If you want to build the plugin binary yourself, take a look at the [build instr
 
 Download an appropriate archive:
 
-VLC version | 64 bit
+Version/Bitness | VLC 64 bit
 ----------- | -------
-2.2.x | [Old version of the plugin](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.2.1/vlc-2.2.x-64bit-osx.zip)
+VLC 2.2.x | [Download (old version of the plugin)](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.2.1/vlc-2.2.x-64bit-osx.zip)
 
 Extract the archive at `/Applications/VLC.app/Contents/MacOS/plugins/video_filter/`
 

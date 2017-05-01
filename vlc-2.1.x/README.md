@@ -9,9 +9,9 @@ Tested to work on VLC 2.1.5, so supposedly should work on 2.1.x.
 ### Windows
 Download an appropriate archive:
 
-VLC version | 32 bit | 64 bit
+Version/Bitness | VLC 32 bit | VLC 64 bit
 ----------- | ------ | -------
-2.1.x | [Tested on 2.1.5](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.1/vlc-2.1.x-32bit-win.zip) | [Tested on 2.1.5](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.1/vlc-2.1.x-64bit-win.zip)
+VLC 2.1.x | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.1/vlc-2.1.x-32bit-win.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/0.3.1/vlc-2.1.x-64bit-win.zip)
 
 Extract the archive at `{VLC}\plugins\video_filter\`, where `{VLC}` stands for the directory the VLC was installed to, for example `C:\Program Files (x86)\VideoLAN\VLC\`.
 
