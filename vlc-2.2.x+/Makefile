@@ -1,4 +1,3 @@
-PREFIX = /usr
 LD = ld
 CC = cc
 INSTALL = install
@@ -7,18 +6,7 @@ LDFLAGS =
 VLC_PLUGIN_CFLAGS := $(shell pkg-config --cflags vlc-plugin)
 VLC_PLUGIN_LIBS := $(shell pkg-config --libs vlc-plugin)
 
-libdir = $(PREFIX)/lib
-
-# Slackware and openSUSE use /usr/lib64 on x86_64
-ARCH=$(shell uname -m)
-ifeq ($(ARCH), x86_64)
-    lib64Test=$(shell grep -E "Slackware|openSUSE" /etc/*-release | wc -l)
-    ifneq ($(lib64Test), 0)
-        libdir = $(PREFIX)/lib64
-    endif
-endif
-
-plugindir = $(libdir)/vlc/plugins
+plugindir := $(shell pkg-config vlc-plugin --variable=pluginsdir)
 
 override CC += -std=gnu99
 override CPPFLAGS += -DPIC -I. -Isrc
