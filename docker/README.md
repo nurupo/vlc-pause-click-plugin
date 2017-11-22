@@ -5,7 +5,7 @@
 It's a lot easier to build Windows plugin binaries using Docker than following [the build instructions](../BUILD.md), as everything is already automated for you.
 That's also the way I build Windows binaries that I release.
 
-The Dockerfile provided in this directory sets up an image that will build all versions of the plugin: 2.1.x and 2.2.x, both 32-bit and 64-bit ones.
+The Dockerfile provided in this directory sets up an image that builds all versions of the plugin: 2.1 and 2.2, both 32-bit and 64-bit ones.
 Once the image is created, you don't have to re-create it if you change plugin source code, it will pickup any changes in code you make.
 
 ### Building
@@ -34,7 +34,8 @@ This is how you would run the container based on the image. Don't forget to spec
 sudo docker run --rm \
     -v /home/nurupo/git/vlc-pause-click-plugin:/repo \
     -v /home/nurupo/git/vlc-pause-click-plugin/build:/build \
-    vlc-pause-click-plugin-windows-build
+    vlc-pause-click-plugin-windows-build \
+    all
 ```
 
 To run a container based off my DockerHub image (which will also pull the image if you don't have it yet), run
@@ -43,50 +44,28 @@ To run a container based off my DockerHub image (which will also pull the image 
 sudo docker run --rm \
     -v /home/nurupo/git/vlc-pause-click-plugin:/repo \
     -v /home/nurupo/git/vlc-pause-click-plugin/build:/build \
-    nurupo/vlc-pause-click-plugin-windows-build
+    nurupo/vlc-pause-click-plugin-windows-build \
+    all
 ```
 
 This will start the building process. You should see the binaries getting created in the directory you specified to be used for `/build` mounting point.
 
 ### Bulding only selected versions of the plugin
 
-If for some reason you don't want to build all of the 4 versions of the plugin binaries, you can comment out the building of unneeded binaries in `script.sh` inside of the container by running
+If for some reason you don't want to build all of the 4 versions of the plugin binaries, you can specify which exact version you want to build by replacing "all" in the `docker run` command with "[2.1|2.2] [i686|x86_64]".
+For example, if you want to build only the VLC 2.2 32-bit version of the plugin, you would run
 
 ```bash
-sudo docker run -it \
+sudo docker run -rm \
     -v /home/nurupo/git/vlc-pause-click-plugin:/repo \
     -v /home/nurupo/git/vlc-pause-click-plugin/build:/build \
     vlc-pause-click-plugin-windows-build \
-    /bin/bash
+    2.2 i686
 ```
 
 (replace `vlc-pause-click-plugin-windows-build` to `nurupo/vlc-pause-click-plugin-windows-build` if you use my DockerHub image)
 
-command, installing an editor of your choice
-
-```bash
-apt-get update && apt-get install nano -y
-```
-
-commenting out the undeeded builds
-
-```bash
-nano script.sh
-```
-
-starting the build script
-
-```bash
-./script.sh
-```
-
-and stopping the container after the build is done
-
-```bash
-exit
-```
-
 ### Freeing space
 
 To free the space taken by the image, you can run `sudo docker images` to get the list of images and `sudo docker rmi` to remove an image.
-There is also `sudo docker ps -a` to get the list of containers and `sudo docker rm` to remove a container, in case you ran `/bin/bash` in the container.
+There is also `sudo docker ps -a` to get the list of containers and `sudo docker rm` to remove a container.

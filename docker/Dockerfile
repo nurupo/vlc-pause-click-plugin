@@ -29,4 +29,4 @@ RUN apt-get update && apt-get install -y \
 
 ADD script.sh .
 
-CMD ./script.sh
+ENTRYPOINT ["/bin/bash", "script.sh"]

@@ -21,17 +21,11 @@ before_script:
   - sudo apt-get update -qq
   - if [ "$TARGET" = "LINUX" ]; then sudo apt-get install vlc pkg-config libvlccore-dev -qq; fi
   - if [ "$TARGET" = "WINDOWS" ]; then sudo apt-get install tree -qq; fi
-  - if [ "$TARGET" = "WINDOWS" ]; then cd docker/ && sed -i "s/build /#build /" script.sh ;fi
-  - if [ "$TARGET" = "WINDOWS" ] && [ "$VLC_VERSION" = "2.1" ]; then printf "\nbuild 2.1.0-git i686-w64-mingw32\nbuild 2.1.0-git x86_64-w64-mingw32\n" >> script.sh ;fi
-  - if [ "$TARGET" = "WINDOWS" ] && [ "$VLC_VERSION" = "2.2" ]; then printf "\nbuild 2.2.0-git i686-w64-mingw32\nbuild 2.2.0-git x86_64-w64-mingw32\n" >> script.sh ;fi
-  - if [ "$TARGET" = "WINDOWS" ]; then cat script.sh ; fi
-  - if [ "$TARGET" = "WINDOWS" ]; then chmod +x script.sh ; fi
-  - if [ "$TARGET" = "WINDOWS" ]; then sudo docker build -t vlc-pause-click-plugin-windows-build . ; fi
-  - if [ "$TARGET" = "WINDOWS" ]; then cd - ; fi
+  - if [ "$TARGET" = "WINDOWS" ]; then sudo docker build -t vlc-pause-click-plugin-windows-build docker ; fi
 
 script:
-  - if [ "$TARGET" = "LINUX" ] && [ "$VLC_VERSION" = "2.1" ]; then cd vlc-2.1.x && sudo make install && cd ..; fi
-  - if [ "$TARGET" = "LINUX" ] && [ "$VLC_VERSION" = "2.2" ]; then cd vlc-2.2.x+ && sudo make install && cd ..; fi
-  - if [ "$TARGET" = "WINDOWS" ]; then sudo docker run --rm -v `pwd`:/repo -v `pwd`/build:/build vlc-pause-click-plugin-windows-build; fi
+  - if [ "$TARGET" = "LINUX" ]; then sudo make install; fi
+  - if [ "$TARGET" = "WINDOWS" ]; then sudo docker run --rm -v `pwd`:/repo -v `pwd`/build:/build vlc-pause-click-plugin-windows-build $VLC_VERSION i686; fi
+  - if [ "$TARGET" = "WINDOWS" ]; then sudo docker run --rm -v `pwd`:/repo -v `pwd`/build:/build vlc-pause-click-plugin-windows-build $VLC_VERSION x86_64; fi
   - if [ "$TARGET" = "WINDOWS" ]; then tree build -s --si --du; fi
   - if [ "$TARGET" = "WINDOWS" ] && [ $(find ./build -name "*.dll" | wc -l) != "2" ]; then false; fi

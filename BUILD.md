@@ -5,8 +5,9 @@
 If instead of using [the precompiled plugin binaries](https://github.com/nurupo/vlc-pause-click-plugin/releases) you want to build them yourself, you can follow these instructions on building the plugin.
 
 Note that [there is a Dockerfile](./docker) that fully automates building for Windows described in these instructions.
+This is what I use to produce the Windows plugin binaries.
 
-Also, if you want to build the plugin for Debian Linux or its derivatives, you can make your life easier if you follow the Debian installation instructions provided in READMEs instead of following this building guide.
+Also, if you want to build the plugin for Debian Linux or its derivatives, you can make your life easier if you follow the Debian installation instructions provided in [README](/README.md) instead of following this building guide.
 
 ### Building
 
@@ -25,7 +26,7 @@ cd vlc
 git checkout 2.2.0-git
 ```
 
-Add the plugin into the VLC build system by copying the appropriate version of `pause_click.c` (there are [vlc-2.1.x](/vlc-2.1.x) and [vlc-2.2.x+](/vlc-2.2.x+) versions) into `modules/video_filter/`.
+Add the plugin into the VLC build system by copying `pause_click.c`, `vlc_interface-2.1.0-git.h` and `vlc_interface-2.2.0-git.h` into `modules/video_filter/`.
 
 If you are building VLC 2.1.0, add
 
@@ -52,6 +53,7 @@ to the end of `modules/video_filter/Modules.am` file for VLC 2.2.0.
 Build VLC the way you would usually do so.
 There should be some instructions on VLC's wiki on how to build it for your target system, you should be able to easily google them.
 Note that we don't really care if VLC fails to compile as long as we manage to compile our plugin, so if something fails the build and there is an option to disable that thing that is failing from being built -- there is no harm in doing so.
+In fact, you will likely want to disable as many build options as possible so that there would be less things to fail the build.
 
 After the build is done, you should have `libpause_click_plugin.dll` (Windows) or `libpause_click_plugin.so` (Linux) or `libpause_click_plugin.dylib` (OS X) somewhere in the subdirectories of `modules/` of the build tree.
 That's the plugin binary that you want.

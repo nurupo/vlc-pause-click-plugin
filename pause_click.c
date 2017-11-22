@@ -1,7 +1,7 @@
 /*****************************************************************************
  * pause_click.c : A filter that allows to pause/play a video by a mouse click
  *****************************************************************************
- * Copyright (C) 2014 Maxim Biro
+ * Copyright (C) 2014-2017 Maxim Biro
  *
  * Authors: Maxim Biro <nurupo.contributions@gmail.com>
  *
@@ -33,12 +33,16 @@
 #include <vlc_atomic.h>
 #include <vlc_common.h>
 #include <vlc_filter.h>
-#include <vlc_interface.h>
 #include <vlc_mouse.h>
 #include <vlc_playlist.h>
 #include <vlc_plugin.h>
 #include <vlc_threads.h>
 
+#ifdef pl_Get
+# include "vlc_interface-2.1.0-git.h"
+#else
+# include "vlc_interface-2.2.0-git.h"
+#endif
 
 #define UNUSED(x) (void)(x)
 
@@ -46,13 +50,13 @@
 #define FROM_CHAR(c) ( (int)( (c) - 'A' ) )
 
 #define MOUSE_BUTTON_LIST \
-    SELECT_COLUMN("Left Button",    MOUSE_BUTTON_LEFT,        0), \
-    SELECT_COLUMN("Middle Button",  MOUSE_BUTTON_CENTER,      1), \
-    SELECT_COLUMN("Right Button",   MOUSE_BUTTON_RIGHT,       2), \
-    SELECT_COLUMN("Scroll Up",      MOUSE_BUTTON_WHEEL_UP,    3), \
-    SELECT_COLUMN("Scroll Down",    MOUSE_BUTTON_WHEEL_DOWN,  4), \
-    SELECT_COLUMN("Scroll Left",    MOUSE_BUTTON_WHEEL_LEFT,  5), \
-    SELECT_COLUMN("Scroll Right",   MOUSE_BUTTON_WHEEL_RIGHT, 6)
+    SELECT_COLUMN(N_("Left Button"),    MOUSE_BUTTON_LEFT,        0), \
+    SELECT_COLUMN(N_("Middle Button"),  MOUSE_BUTTON_CENTER,      1), \
+    SELECT_COLUMN(N_("Right Button"),   MOUSE_BUTTON_RIGHT,       2), \
+    SELECT_COLUMN(N_("Scroll Up"),      MOUSE_BUTTON_WHEEL_UP,    3), \
+    SELECT_COLUMN(N_("Scroll Down"),    MOUSE_BUTTON_WHEEL_DOWN,  4), \
+    SELECT_COLUMN(N_("Scroll Left"),    MOUSE_BUTTON_WHEEL_LEFT,  5), \
+    SELECT_COLUMN(N_("Scroll Right"),   MOUSE_BUTTON_WHEEL_RIGHT, 6)
 
 #define SELECT_COLUMN(NAME, VALUE, INDEX) NAME
 static const char *const mouse_button_names[] = { MOUSE_BUTTON_LIST };
@@ -66,64 +70,70 @@ static const char mouse_button_values_string[] = { MOUSE_BUTTON_LIST , 0 };
 static const char *const mouse_button_values[] = { MOUSE_BUTTON_LIST };
 #undef SELECT_COLUMN
 
-#define SETTINGS_PREFIX "pause-click"
+#define SETTINGS_PREFIX "pause-click-"
 
 #define MOUSE_BUTTON_SETTING SETTINGS_PREFIX "mouse-button-setting"
 #define MOUSE_BUTTON_DEFAULT mouse_button_values_string // MOUSE_BUTTON_LEFT
 
-#define DOUBLE_CLICK_SETTING SETTINGS_PREFIX "double-click-setting"
-#define DOUBLE_CLICK_DEFAULT true
+#define DOUBLE_CLICK_ENABLED_SETTING SETTINGS_PREFIX "double-click-setting"
+#define DOUBLE_CLICK_ENABLED_DEFAULT false
 
 #define DOUBLE_CLICK_DELAY_SETTING SETTINGS_PREFIX "double-click-delay-setting"
 #define DOUBLE_CLICK_DELAY_DEFAULT 300
 
 
-int OpenFilter(vlc_object_t *);
-void CloseFilter(vlc_object_t *);
-int OpenInterface(vlc_object_t *);
+static int OpenFilter(vlc_object_t *);
+static void CloseFilter(vlc_object_t *);
+static int OpenInterface(vlc_object_t *);
+static void CloseInterface(vlc_object_t *);
 
-intf_thread_t *p_intf = NULL;
-vlc_timer_t timer;
-bool timer_initialized = false;
-atomic_bool timer_scheduled;
+
+static intf_thread_t *p_intf = NULL;
+
+static vlc_timer_t timer;
+static bool timer_initialized = false;
+static atomic_bool timer_scheduled;
 
 
 vlc_module_begin()
-    set_description("Pause/Play video on mouse click")
-    set_shortname("Pause click")
+    set_description(N_("Pause/Play video on mouse click"))
+    set_shortname(N_("Pause click"))
     set_capability("video filter2", 0)
     set_category(CAT_VIDEO)
     set_subcategory(SUBCAT_VIDEO_VFILTER)
     set_callbacks(OpenFilter, CloseFilter)
-    add_string(MOUSE_BUTTON_SETTING, MOUSE_BUTTON_DEFAULT, "Mouse button",
-               "Defines the mouse button that will pause/play the video.", false)
+    add_string(MOUSE_BUTTON_SETTING, MOUSE_BUTTON_DEFAULT, N_("Mouse button"),
+               N_("Defines the mouse button that will pause/play the video."), false)
     change_string_list(mouse_button_values, mouse_button_names)
-    add_bool(DOUBLE_CLICK_SETTING, DOUBLE_CLICK_DEFAULT, "Ignore double clicks",
-             "Useful if you don't want the video to pause when double clicking "
-             "to fullscreen. Note that enabling this will delay pause/play "
-             "action by the double click interval, so the experience might not "
-             "be as snappy as with this option disabled.", false)
-    // 20ms and 5sec sounds liberate enough, right?
+    add_bool(DOUBLE_CLICK_ENABLED_SETTING, DOUBLE_CLICK_ENABLED_DEFAULT,
+             N_("Ignore double clicks"), N_("Useful if you don't want the video to "
+             "pause when double clicking to fullscreen. Note that enabling this "
+             "will delay pause/play action by the double click interval, so the "
+             "experience might not be as snappy as with this option disabled."), false)
     add_integer_with_range(DOUBLE_CLICK_DELAY_SETTING, DOUBLE_CLICK_DELAY_DEFAULT,
-                           20, 5000, "Double click interval (milliseconds)",
-                           "Two clicks made during this time interval will be "
-                           "trated as a double click and will be ignored.", false)
+                           20, 5000, N_("Double click interval (milliseconds)"),
+                           N_("Two clicks made during this time interval will be "
+                           "trated as a double click and will be ignored."), false)
         add_submodule()
         set_capability("interface", 0)
         set_category(CAT_INTERFACE)
         set_subcategory(SUBCAT_INTERFACE_CONTROL)
-        set_callbacks(OpenInterface, NULL)
+        set_callbacks(OpenInterface, CloseInterface)
 vlc_module_end()
 
 
-void pause_play()
+static void pause_play(void)
 {
+    if (p_intf == NULL) {
+        return;
+    }
+
     playlist_t* p_playlist = pl_Get(p_intf);
     playlist_Control(p_playlist,
                      (playlist_Status(p_playlist) == PLAYLIST_RUNNING ? PLAYLIST_PAUSE : PLAYLIST_PLAY), 0);
 }
 
-void timer_callback(void* data)
+static void timer_callback(void* data)
 {
     UNUSED(data);
 
@@ -136,7 +146,7 @@ void timer_callback(void* data)
     atomic_store(&timer_scheduled, false);
 }
 
-int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mouse_old, const vlc_mouse_t *p_mouse_new)
+static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mouse_old, const vlc_mouse_t *p_mouse_new)
 {
     UNUSED(p_mouse_out);
 
@@ -153,13 +163,12 @@ int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mou
     int mouse_button = FROM_CHAR(mouse_button_value[0]);
     free(mouse_button_value);
 
-    if (p_intf != NULL &&
-            (vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, mouse_button) ||
+    if (vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, mouse_button) ||
             // on some systems (e.g. Linux) b_double_click is not set for a double-click, so we track any click and
             // decide if it was a double click on our own. This provides the most uniform cross-platform behaviour.
-            (p_mouse_new->b_double_click && mouse_button == MOUSE_BUTTON_LEFT))) {
+            (p_mouse_new->b_double_click && mouse_button == MOUSE_BUTTON_LEFT)) {
         // if ignoring double click
-        if (var_InheritBool(p_filter, DOUBLE_CLICK_SETTING) && timer_initialized) {
+        if (var_InheritBool(p_filter, DOUBLE_CLICK_ENABLED_SETTING) && timer_initialized) {
             if (atomic_load(&timer_scheduled)) {
                 // it's a double click -- cancel the scheduled pause/play, if any
                 atomic_store(&timer_scheduled, false);
@@ -178,7 +187,7 @@ int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mou
     return VLC_EGENERIC;
 }
 
-picture_t *filter(filter_t *p_filter, picture_t *p_pic_in)
+static picture_t *filter(filter_t *p_filter, picture_t *p_pic_in)
 {
     UNUSED(p_filter);
 
@@ -186,7 +195,7 @@ picture_t *filter(filter_t *p_filter, picture_t *p_pic_in)
     return p_pic_in;
 }
 
-int OpenFilter(vlc_object_t *p_this)
+static int OpenFilter(vlc_object_t *p_this)
 {
     filter_t *p_filter = (filter_t *)p_this;
 
@@ -202,18 +211,27 @@ int OpenFilter(vlc_object_t *p_this)
     return VLC_SUCCESS;
 }
 
-void CloseFilter(vlc_object_t *p_this)
+static void CloseFilter(vlc_object_t *p_this)
 {
     UNUSED(p_this);
 
     if (timer_initialized) {
         vlc_timer_destroy(timer);
+        timer_initialized = false;
+        atomic_store(&timer_scheduled, false);
     }
 }
 
-int OpenInterface(vlc_object_t *p_this)
+static int OpenInterface(vlc_object_t *p_this)
 {
     p_intf = (intf_thread_t*) p_this;
 
     return VLC_SUCCESS;
+}
+
+static void CloseInterface(vlc_object_t *p_this)
+{
+    UNUSED(p_this);
+
+    p_intf = NULL;
 }

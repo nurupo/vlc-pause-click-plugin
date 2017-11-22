@@ -1,7 +1,7 @@
 LD = ld
 CC = cc
 INSTALL = install
-CFLAGS = -g -O2 -Wall -Wextra
+CFLAGS = -g0 -O3 -Wall -Wextra
 LDFLAGS =
 VLC_PLUGIN_CFLAGS := $(shell pkg-config --cflags vlc-plugin)
 VLC_PLUGIN_LIBS := $(shell pkg-config --libs vlc-plugin)
