@@ -55,5 +55,5 @@ There should be some instructions on VLC's wiki on how to build it for your targ
 Note that we don't really care if VLC fails to compile as long as we manage to compile our plugin, so if something fails the build and there is an option to disable that thing that is failing from being built -- there is no harm in doing so.
 In fact, you will likely want to disable as many build options as possible so that there would be less things to fail the build.
 
-After the build is done, you should have `libpause_click_plugin.dll` (Windows) or `libpause_click_plugin.so` (Linux) or `libpause_click_plugin.dylib` (OS X) somewhere in the subdirectories of `modules/` of the build tree.
+After the build is done, you should have `libpause_click_plugin.dll` (Windows) or `libpause_click_plugin.so` (Linux) or `libpause_click_plugin.dylib` (macOS) somewhere in the subdirectories of `modules/` of the build tree.
 That's the plugin binary that you want.

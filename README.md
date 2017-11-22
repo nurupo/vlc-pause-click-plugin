@@ -6,7 +6,7 @@ This plugin allows you to pause/play a video by clicking on the video image.
 - [Supported versions of VLC](#supported-versions-of-vlc)
 - [Install](#install)
   - [Windows](#windows)
-  - [OS X](#os-x)
+  - [macOS](#macos)
   - [Linux](#linux)
     - [Debian](#debian)
     - [Arch Linux](#arch-linux)
@@ -32,9 +32,9 @@ Extract the archive at `{VLC}\plugins\video_filter\`, where `{VLC}` is the direc
 
 If you want to build the plugin binary yourself, take a look at the [build instructions](/BUILD.md).
 
-### OS X
+### macOS
 
-***OS X plugin is outdated, we are looking for someone [to contribute it](/BUILD.md).***
+***macOS plugin is outdated, we are looking for someone [to contribute it](/BUILD.md).***
 
 Download an appropriate archive:
 
@@ -83,7 +83,7 @@ Make sure you have checked both of "Pause/Play video on mouse click" checkboxes 
 
 ### I don't see any plugin-related options described in [Usage](#usage) instructions in my VLC preferences
 
-- Make sure to restart VLC after you have put the plugin `.dll` (Widnows) or `.so` (Linux) or `.dylib` (OS X) in the appropriate directory.
+- Make sure to restart VLC after you have put the plugin `.dll` (Widnows) or `.so` (Linux) or `.dylib` (macOS) in the appropriate directory.
 - Make sure you have downloaded the appropriate version of the plugin for the VLC you are trying to use it with. Plugin's version and bitness should match the version and bitness of the VLC you are trying to use the plugin with. Plugin's bitness has nothing to do with the operation system bintess. For example, if you use 32-bit VLC, it doesn't matter whether your Windows is 32-bit or 64-bit, you should use 32-bit version of the plugin, because it matches the bitness of the VLC you use.
 
 ### I do see the plugin-related options described in [Usage](#usage) instructions in my VLC preferences, but the plugin still doesn't work
