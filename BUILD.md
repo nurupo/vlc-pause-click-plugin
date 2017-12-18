@@ -4,56 +4,81 @@
 
 If instead of using [the precompiled plugin binaries](https://github.com/nurupo/vlc-pause-click-plugin/releases) you want to build them yourself, you can follow these instructions on building the plugin.
 
-Note that [there is a Dockerfile](./docker) that fully automates building for Windows described in these instructions.
-This is what I use to produce the Windows plugin binaries.
+These instructions describe out of the tree building of the plugin, since this is the easiest way to build it.
 
-Also, if you want to build the plugin for Debian Linux or its derivatives, you can make your life easier if you follow the Debian installation instructions provided in [README](/README.md) instead of following this building guide.
+### Prerequisites
+
+The prerequisite for building is having the VLC sdk corresponding to the version of VLC you are building the plugin for.
+
+Specifically, you will need:
+  - `vlccore` library.
+  - Pkg-config file `vlc-plugin.pc`.
+  - Set of `libvlccore` headers. `vlc_filter.h` is one of those plugin headers.
+  - Set of `libvlc` headers. `libvlc_version.h` is one of those headers.
+
+The way you get the VLC sdk varies from platform to platform.
+
+On Windows there is a `sdk` directory included with your VLC installation that includes everything you need.
+Note that [there is a Dockerfile](./docker) that fully automates building for Windows described in these instructions.
+That Docker container is what I use to produce the Windows plugin binaries.
+
+On macOS `vlccore` library and `libvlc` headers are included in the VLC `.dmg` file, but there are `libvlccore` headers and `vlc-plugin.pc` in there.
+You will have to get the missing pieces from the `sdk` directory of Windows VLC `.zip` archive of the same version as your `.dmg` VLC.
+
+On Linux you generally just install the packages that contain the mentioned files and you are good to go.
+If you have manually built VLC instead of getting it pre-built from the packages, you should probably already have the VLC libraries and headers installed.
+
+If you want to build the plugin for Debian Linux or its derivatives, there are simpler instructions provided in [README](/README.md).
+
+### Fixing pkg-config
+
+Make sure `pkg-config --cflags vlc-plugin` and `pkg-config --libs vlc-plugin` commands print the correct include and library paths.
+If they do, you should skip this part and go to building.
+
+Here is an example of how you would fix this for a Windows build (assuming you are on Linux and have Windows VLC sdk)
+
+```
+cd sdk
+# Set the prefix path to $PWD in vlc-plugin.pc
+# It's hardcoded to the path VLC developer installed his VLC to and this is not the path you want
+sed -i "s|^prefix=.*|prefix=$PWD|g" lib/pkgconfig/*.pc
+# Make pkg-config aware of vlc-plugin.pc
+export PKG_CONFIG_PATH="${PWD}/lib/pkgconfig"
+```
+
+After this `pkg-config --cflags vlc-plugin` and `pkg-config --libs vlc-plugin` commands should print the correct paths to the `vlccore` library and the headers.
 
 ### Building
 
-What we want to do is to build VLC with the plugin integrated into its source tree and build system, so that the plugin would be built together with VLC.
-
-Git clone VLC:
+Once you get pkg-config to find the dependencies, the building is as easy as
 
 ```sh
-git clone git://git.videolan.org/vlc.git
+make CC=your-compiler LD=your-linked OS=your-target-os
 ```
 
-Checkout the git tag that matches version of VLC that you want to build the plugin for. You can use `git tag` to get a list of all tags available. For example, for 2.2.0 you would do:
+For example, to build 32-bit Windows binaries you would do
 
 ```sh
-cd vlc
-git checkout 2.2.0-git
+make CC=i686-w64-mingw32-gcc LD=i686-w64-mingw32-ld OS=Windows
 ```
 
-Add the plugin into the VLC build system by copying `pause_click.c`, `vlc_interface-2.1.0-git.h` and `vlc_interface-2.2.0-git.h` into `modules/video_filter/`.
+Makefile defaults to Linux, so for Linux
 
-If you are building VLC 2.1.0, add
-
-```
-libpause_click_plugin_la_SOURCES = pause_click.c
-libpause_click_plugin_la_CFLAGS = $(AM_CFLAGS)
-libpause_click_plugin_la_LIBADD = $(AM_LIBADD)
-libvlc_LTLIBRARIES += libpause_click_plugin.la
+```sh
+make
 ```
 
-to the end of `modules/video_filter/Modules.am` file.
+would be enough.
 
-If you are building VLC 2.2.0, add
+For macOS
 
 ```
-libpause_click_plugin_la_SOURCES = pause_click.c
-libpause_click_plugin_la_CFLAGS = $(AM_CFLAGS)
-libpause_click_plugin_la_LIBADD = $(AM_LIBADD)
-video_filter_LTLIBRARIES += libpause_click_plugin.la
+make OS=macOS
 ```
 
-to the end of `modules/video_filter/Modules.am` file for VLC 2.2.0.
+should be enough.
 
-Build VLC the way you would usually do so.
-There should be some instructions on VLC's wiki on how to build it for your target system, you should be able to easily google them.
-Note that we don't really care if VLC fails to compile as long as we manage to compile our plugin, so if something fails the build and there is an option to disable that thing that is failing from being built -- there is no harm in doing so.
-In fact, you will likely want to disable as many build options as possible so that there would be less things to fail the build.
+`OS` is used to set the correct shared library extension.
 
-After the build is done, you should have `libpause_click_plugin.dll` (Windows) or `libpause_click_plugin.so` (Linux) or `libpause_click_plugin.dylib` (macOS) somewhere in the subdirectories of `modules/` of the build tree.
-That's the plugin binary that you want.
+After running make you should see `libpause_click_plugin.[dll|so|dylib]` generated, which is the plugin binary ready for use.
+You might want to strip it to shave some kilobytes off.

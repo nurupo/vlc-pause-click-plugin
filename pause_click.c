@@ -38,10 +38,16 @@
 #include <vlc_plugin.h>
 #include <vlc_threads.h>
 
-#ifdef pl_Get
+#include <vlc/libvlc_version.h>
+
+#if LIBVLC_VERSION_MAJOR == 2 && LIBVLC_VERSION_MINOR == 1
 # include "vlc_interface-2.1.0-git.h"
-#else
+#elif LIBVLC_VERSION_MAJOR == 2 && LIBVLC_VERSION_MINOR == 2
 # include "vlc_interface-2.2.0-git.h"
+#elif LIBVLC_VERSION_MAJOR >= 3 && LIBVLC_VERSION_MINOR >= 0
+# include <vlc_interface.h>
+#else
+# error "VLC version " LIBVLC_VERSION_MAJOR "." LIBVLC_VERSION_MINOR " is too old and won't be supported"
 #endif
 
 #define UNUSED(x) (void)(x)
@@ -98,7 +104,11 @@ static atomic_bool timer_scheduled;
 vlc_module_begin()
     set_description(N_("Pause/Play video on mouse click"))
     set_shortname(N_("Pause click"))
+#if LIBVLC_VERSION_MAJOR == 2
     set_capability("video filter2", 0)
+#elif LIBVLC_VERSION_MAJOR >= 3
+    set_capability("video filter", 0)
+#endif
     set_category(CAT_VIDEO)
     set_subcategory(SUBCAT_VIDEO_VFILTER)
     set_callbacks(OpenFilter, CloseFilter)
