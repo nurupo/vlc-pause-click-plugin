@@ -41,6 +41,8 @@ VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/d
 
 Extract the archive at `{VLC}\plugins\video_filter\`, where `{VLC}` is the directory the VLC was installed into, for example `C:\Program Files (x86)\VideoLAN\VLC\`.
 
+Then follow [the usage instructions](#usage) below.
+
 If you want to build the plugin binary yourself, take a look at the [build instructions](/BUILD.md).
 
 ### macOS
@@ -54,6 +56,8 @@ VLC 2.2 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/d
 VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/1.0.0/vlc-3.0-macosx.zip)
 
 Extract the archive at `/Applications/VLC.app/Contents/MacOS/plugins/video_filter/`
+
+Then follow [the usage instructions](#usage) below.
 
 If you want to build the plugin binary yourself, take a look at the [build instructions](/BUILD.md).
 
@@ -71,7 +75,9 @@ make
 sudo make install
 ```
 
-If these instructions don't work for you (perhaps you are using a non-Debian-derived Linux distribuion), [there are more generic build instructions available](/BUILD.md).
+Then follow [the usage instructions](#usage) below.
+
+If these build instructions don't work for you (perhaps you are using a non-Debian-derived Linux distribuion), [there are more generic build instructions available](/BUILD.md).
 
 #### Arch Linux
 There is a `vlc-pause-click-plugin` package [available](https://aur.archlinux.org/packages/vlc-pause-click-plugin/) in the AUR repository.
@@ -98,6 +104,7 @@ It's a very common mistake to skip one of those.
 Plugin's version and bitness should match the version and bitness of the VLC you are trying to use the plugin with.
 Plugin's bitness has nothing to do with the operation system bintess.
 For example, if you use 32-bit VLC, it doesn't matter whether your Windows is 32-bit or 64-bit, you should use 32-bit version of the plugin, because it matches the bitness of the VLC you use.
+- Some users have reported that they had to run the VLC executable with `--reset-plugins-cache` flag once for the plugin to appear in the GUI.
 
 ### I do see the plugin-related options described in [Usage](#usage) instructions in my VLC preferences, but the plugin still doesn't work
 
