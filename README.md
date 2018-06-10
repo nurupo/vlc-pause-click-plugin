@@ -1,7 +1,7 @@
 # Pause Click plugin for VLC
 VLC plugin that allows you to pause/play a video by clicking on the video image.
 
-Works nicely with "double-click to fullscreen" too, if you [enable this option in the settings](http://i.imgur.com/gPPXjqw.png).
+Works nicely with "double-click to fullscreen" too, if you [enable "Ignore double clicks" option in the settings](http://i.imgur.com/gPPXjqw.png).
 
 ## Table of contents
 
