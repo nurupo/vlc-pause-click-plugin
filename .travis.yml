@@ -10,9 +10,9 @@ matrix:
     - os: linux
       env: TARGET=Linux   VLC_VERSION=2.1 DEBIAN=wheezy-backports
     - os: linux
-      env: TARGET=Linux   VLC_VERSION=2.2 DEBIAN=stretch
+      env: TARGET=Linux   VLC_VERSION=2.2 DEBIAN=jessie
     - os: linux
-      env: TARGET=Linux   VLC_VERSION=3.0 DEBIAN=experimental
+      env: TARGET=Linux   VLC_VERSION=3.0 DEBIAN=stretch
     - os: linux
       env: TARGET=Windows VLC_VERSION=2.1
     - os: linux

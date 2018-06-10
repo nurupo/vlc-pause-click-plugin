@@ -25,6 +25,7 @@ if [ "$TARGET" = "Linux" ]; then
   fi
   RUN make -C /repo install
 elif [ "$TARGET" = "Windows" ]; then
+  sudo apt-get update
   sudo apt-get install -y tree
   # use our own docker image for testing building of Windows binaries
   # makes sure that our docker image is not broken too
