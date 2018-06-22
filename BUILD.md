@@ -22,7 +22,7 @@ On Windows there is a `sdk` directory included with your VLC installation that i
 Note that [there is a Dockerfile](./docker) that fully automates building for Windows described in these instructions.
 That Docker container is what I use to produce the Windows plugin binaries.
 
-On macOS `vlccore` library and `libvlc` headers are included in the VLC `.dmg` file, but there are `libvlccore` headers and `vlc-plugin.pc` in there.
+On macOS `vlccore` library and `libvlc` headers are included in the VLC `.dmg` file, but `libvlccore` headers and `vlc-plugin.pc` are not included.
 You will have to get the missing pieces from the `sdk` directory of Windows VLC `.zip` archive of the same version as your `.dmg` VLC.
 
 On Linux you generally just install the packages that contain the mentioned files and you are good to go.
