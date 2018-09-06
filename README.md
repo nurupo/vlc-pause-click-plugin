@@ -1,7 +1,7 @@
 # Pause Click plugin for VLC
 VLC plugin that allows you to pause/play a video by clicking on the video image.
 
-Works nicely with "double-click to fullscreen" too, if you [enable "Ignore double clicks" option in the settings](http://i.imgur.com/gPPXjqw.png).
+Works nicely with "double-click to fullscreen" too, if you enable ["Ignore double clicks" option in the settings](http://i.imgur.com/gPPXjqw.png).
 
 ## Table of contents
 
@@ -55,7 +55,7 @@ VLC 2.1 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/d
 VLC 2.2 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/1.0.0/vlc-2.2-macosx.zip)
 VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/1.0.0/vlc-3.0-macosx.zip)
 
-Extract the archive at `/Applications/VLC.app/Contents/MacOS/plugins/video_filter/`
+Extract the archive at `/Applications/VLC.app/Contents/MacOS/plugins/`
 
 Then follow [the usage instructions](#usage) below.
 
@@ -104,10 +104,12 @@ It's a very common mistake to skip one of those.
 Plugin's version and bitness should match the version and bitness of the VLC you are trying to use the plugin with.
 Plugin's bitness has nothing to do with the operation system bintess.
 For example, if you use 32-bit VLC, it doesn't matter whether your Windows is 32-bit or 64-bit, you should use 32-bit version of the plugin, because it matches the bitness of the VLC you use.
-- Some users have reported that they had to run the VLC executable with `--reset-plugins-cache` flag once for the plugin to appear in the GUI.
+- Some users [have reported](https://github.com/nurupo/vlc-pause-click-plugin/issues/32#issue-296248669) that they had to run the VLC executable with `--reset-plugins-cache` flag once for the plugin to appear in the GUI.
 
 ### I do see the plugin-related options described in [Usage](#usage) instructions in my VLC preferences, but the plugin still doesn't work
 
 - Double-check that you have followed [Usage](#usage) instructions closely, especially 3rd and 4th points.
 Look at the screenshots.
+- Some users [have reported](https://github.com/nurupo/vlc-pause-click-plugin/issues/45#issuecomment-418964880) that they had to re-install VLC and select "Delete preferences and cache" in the installer for the plugin to work.
+
 If the issue persists, open an Issue in this repository and I will try to help.
