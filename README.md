@@ -63,6 +63,11 @@ If you want to build the plugin binary yourself, take a look at the [build instr
 
 ### Linux
 
+Note that Snap versions of VLC are not supported.
+Not supported in a sense that I haven't figured out how to build the plugin such that it would be ABI compatible with the Snap VLC and how to make the Snap VLC load the plugin.
+If someone could figure that out and contribute their findings - that would be very helpful.
+[This Snap VLC discussion](https://github.com/nurupo/vlc-pause-click-plugin/issues/33) might be useful.
+
 #### Debian
 Get required libraries and tools:
 ```bash
