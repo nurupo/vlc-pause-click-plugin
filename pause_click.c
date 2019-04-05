@@ -123,7 +123,7 @@ vlc_module_begin()
     add_integer_with_range(DOUBLE_CLICK_DELAY_SETTING, DOUBLE_CLICK_DELAY_DEFAULT,
                            20, 5000, N_("Double click interval (milliseconds)"),
                            N_("Two clicks made during this time interval will be "
-                           "trated as a double click and will be ignored."), false)
+                           "treated as a double click and will be ignored."), false)
         add_submodule()
         set_capability("interface", 0)
         set_category(CAT_INTERFACE)
