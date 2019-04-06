@@ -9,6 +9,16 @@ if [ "$TARGET" = "Linux" ]; then
   RUN() {
     sudo docker exec ci "$@"
   }
+  if [ "$DEBIAN" = "wheezy-backports" ]; then
+    # Debian Wheezy package repository was moved to Archive but the Docker image still links to the main repository
+    RUN bash -c 'echo "
+                 deb http://snapshot.debian.org/archive/debian/20190321T212815Z wheezy main
+                 deb http://snapshot.debian.org/archive/debian-security/20190321T212815Z wheezy/updates main
+                 deb http://snapshot.debian.org/archive/debian/20190321T212815Z wheezy-updates main
+                 " > /etc/apt/sources.list'
+    RUN bash -c 'echo "deb http://snapshot.debian.org/archive/debian/20190321T212815Z wheezy-backports main" > /etc/apt/sources.list.d/backports.list'
+    RUN bash -c 'echo "Acquire::Check-Valid-Until false;" > /etc/apt/apt.conf.d/10-nocheckvalid'
+  fi
   RUN apt-get update
   # for some reason apt is having issues with verifying packages due to old/missing keys?
   RUN apt-get install -y gnupg
