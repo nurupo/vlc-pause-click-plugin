@@ -52,39 +52,19 @@
 
 #define UNUSED(x) (void)(x)
 
-#define TO_CHAR(num) ( 'A' + (char)(num) )
-#define FROM_CHAR(c) ( (int)( (c) - 'A' ) )
+static const char *const mouse_button_names[] = {N_("None"), N_("Left Button"), N_("Middle Button"), N_("Right Button"), N_("Scroll Up"), N_("Scroll Down"), N_("Scroll Left"), N_("Scroll Right")};
+static const int mouse_button_values_index[] = {0, 1, 2, 3, 4, 5, 6, 7};
+static const int mouse_button_values[] = {-1, MOUSE_BUTTON_LEFT, MOUSE_BUTTON_CENTER, MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN, MOUSE_BUTTON_WHEEL_LEFT, MOUSE_BUTTON_WHEEL_RIGHT};
 
-#define MOUSE_BUTTON_LIST \
-    SELECT_COLUMN(N_("Left Button"),    MOUSE_BUTTON_LEFT,        0), \
-    SELECT_COLUMN(N_("Middle Button"),  MOUSE_BUTTON_CENTER,      1), \
-    SELECT_COLUMN(N_("Right Button"),   MOUSE_BUTTON_RIGHT,       2), \
-    SELECT_COLUMN(N_("Scroll Up"),      MOUSE_BUTTON_WHEEL_UP,    3), \
-    SELECT_COLUMN(N_("Scroll Down"),    MOUSE_BUTTON_WHEEL_DOWN,  4), \
-    SELECT_COLUMN(N_("Scroll Left"),    MOUSE_BUTTON_WHEEL_LEFT,  5), \
-    SELECT_COLUMN(N_("Scroll Right"),   MOUSE_BUTTON_WHEEL_RIGHT, 6)
+#define CFG_PREFIX "pause-click-"
 
-#define SELECT_COLUMN(NAME, VALUE, INDEX) NAME
-static const char *const mouse_button_names[] = { MOUSE_BUTTON_LIST };
-#undef SELECT_COLUMN
+#define MOUSE_BUTTON_CFG CFG_PREFIX "mouse-button"
+#define MOUSE_BUTTON_DEFAULT 1 // MOUSE_BUTTON_LEFT
 
-#define SELECT_COLUMN(NAME, VALUE, INDEX) TO_CHAR(VALUE)
-static const char mouse_button_values_string[] = { MOUSE_BUTTON_LIST , 0 };
-#undef SELECT_COLUMN
+#define IGNORE_DOUBLE_CLICK_CFG CFG_PREFIX "ignore-double-click"
+#define IGNORE_DOUBLE_CLICK_DEFAULT false
 
-#define SELECT_COLUMN(NAME, VALUE, INDEX) mouse_button_values_string + INDEX
-static const char *const mouse_button_values[] = { MOUSE_BUTTON_LIST };
-#undef SELECT_COLUMN
-
-#define SETTINGS_PREFIX "pause-click-"
-
-#define MOUSE_BUTTON_SETTING SETTINGS_PREFIX "mouse-button-setting"
-#define MOUSE_BUTTON_DEFAULT mouse_button_values_string // MOUSE_BUTTON_LEFT
-
-#define DOUBLE_CLICK_ENABLED_SETTING SETTINGS_PREFIX "double-click-setting"
-#define DOUBLE_CLICK_ENABLED_DEFAULT false
-
-#define DOUBLE_CLICK_DELAY_SETTING SETTINGS_PREFIX "double-click-delay-setting"
+#define DOUBLE_CLICK_DELAY_CFG CFG_PREFIX "double-click-delay"
 #define DOUBLE_CLICK_DELAY_DEFAULT 300
 
 
@@ -112,15 +92,16 @@ vlc_module_begin()
     set_category(CAT_VIDEO)
     set_subcategory(SUBCAT_VIDEO_VFILTER)
     set_callbacks(OpenFilter, CloseFilter)
-    add_string(MOUSE_BUTTON_SETTING, MOUSE_BUTTON_DEFAULT, N_("Mouse button"),
-               N_("Defines the mouse button that will pause/play the video."), false)
-    change_string_list(mouse_button_values, mouse_button_names)
-    add_bool(DOUBLE_CLICK_ENABLED_SETTING, DOUBLE_CLICK_ENABLED_DEFAULT,
+    add_integer(MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT, N_("Mouse button"),
+                N_("Defines the mouse button that will pause/play the video."), false)
+    vlc_config_set(VLC_CONFIG_LIST, (size_t)(sizeof(mouse_button_values_index)/sizeof(int))-1,
+                   mouse_button_values_index+1, mouse_button_names+1);
+    add_bool(IGNORE_DOUBLE_CLICK_CFG, IGNORE_DOUBLE_CLICK_DEFAULT,
              N_("Ignore double clicks"), N_("Useful if you don't want the video to "
              "pause when double clicking to fullscreen. Note that enabling this "
              "will delay pause/play action by the double click interval, so the "
              "experience might not be as snappy as with this option disabled."), false)
-    add_integer_with_range(DOUBLE_CLICK_DELAY_SETTING, DOUBLE_CLICK_DELAY_DEFAULT,
+    add_integer_with_range(DOUBLE_CLICK_DELAY_CFG, DOUBLE_CLICK_DELAY_DEFAULT,
                            20, 5000, N_("Double click interval (milliseconds)"),
                            N_("Two clicks made during this time interval will be "
                            "treated as a double click and will be ignored."), false)
@@ -156,6 +137,15 @@ static void timer_callback(void* data)
     atomic_store(&timer_scheduled, false);
 }
 
+static int cfg_get_mouse_button(vlc_object_t *p_obj, const char *cfg, int default_value) {
+    int mouse_button = mouse_button_values[default_value];
+    int mouse_button_index = var_InheritInteger(p_obj, cfg);
+    if (mouse_button_index >= 0 && (size_t)mouse_button_index <= sizeof(mouse_button_values)-1) {
+        mouse_button = mouse_button_values[mouse_button_index];
+    }
+    return mouse_button;
+}
+
 static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mouse_old, const vlc_mouse_t *p_mouse_new)
 {
     UNUSED(p_mouse_out);
@@ -166,19 +156,14 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
     }
 
     // get mouse button from settings. updates if user changes the setting
-    char *mouse_button_value = var_InheritString(p_filter, MOUSE_BUTTON_SETTING);
-    if (mouse_button_value == NULL) {
-        return VLC_EGENERIC;
-    }
-    int mouse_button = FROM_CHAR(mouse_button_value[0]);
-    free(mouse_button_value);
+    const int mouse_button = cfg_get_mouse_button((vlc_object_t *)p_filter, MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT);
 
     if (vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, mouse_button) ||
             // on some systems (e.g. Linux) b_double_click is not set for a double-click, so we track any click and
             // decide if it was a double click on our own. This provides the most uniform cross-platform behaviour.
             (p_mouse_new->b_double_click && mouse_button == MOUSE_BUTTON_LEFT)) {
         // if ignoring double click
-        if (var_InheritBool(p_filter, DOUBLE_CLICK_ENABLED_SETTING) && timer_initialized) {
+        if (var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG) && timer_initialized) {
             if (atomic_load(&timer_scheduled)) {
                 // it's a double click -- cancel the scheduled pause/play, if any
                 atomic_store(&timer_scheduled, false);
@@ -186,7 +171,7 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
             } else {
                 // it might be a single click -- schedule pause/play call
                 atomic_store(&timer_scheduled, true);
-                vlc_timer_schedule(timer, false, var_InheritInteger(p_filter, DOUBLE_CLICK_DELAY_SETTING)*1000, 0);
+                vlc_timer_schedule(timer, false, var_InheritInteger(p_filter, DOUBLE_CLICK_DELAY_CFG)*1000, 0);
             }
         } else {
             pause_play();
