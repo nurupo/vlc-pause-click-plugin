@@ -67,6 +67,11 @@ static const int mouse_button_values[] = {-1, MOUSE_BUTTON_LEFT, MOUSE_BUTTON_CE
 #define DOUBLE_CLICK_DELAY_CFG CFG_PREFIX "double-click-delay"
 #define DOUBLE_CLICK_DELAY_DEFAULT 300
 
+#define DISABLE_FS_TOGGLE_CFG CFG_PREFIX "disable-fs-toggle"
+#define DISABLE_FS_TOGGLE_DEFAULT false
+
+#define FS_TOGGLE_MOUSE_BUTTON_CFG CFG_PREFIX "fs-toggle-mouse-button"
+#define FS_TOGGLE_MOUSE_BUTTON_DEFAULT 0 // None
 
 static int OpenFilter(vlc_object_t *);
 static void CloseFilter(vlc_object_t *);
@@ -105,6 +110,14 @@ vlc_module_begin()
                            20, 5000, N_("Double click interval (milliseconds)"),
                            N_("Two clicks made during this time interval will be "
                            "treated as a double click and will be ignored."), false)
+    add_bool(DISABLE_FS_TOGGLE_CFG, DISABLE_FS_TOGGLE_DEFAULT,
+             N_("Disable fullscreen toggle on double click"),
+             N_("The video will no longer fullscreen if you double click on it. "
+             "This option is unaffected by the double click interval option."), false)
+    add_integer(FS_TOGGLE_MOUSE_BUTTON_CFG, FS_TOGGLE_MOUSE_BUTTON_DEFAULT,
+                N_("Assign fullscreen toggle to"),
+                N_("Assigns fullscreen toggle to a mouse button."), false)
+    change_integer_list(mouse_button_values_index, mouse_button_names)
         add_submodule()
         set_capability("interface", 0)
         set_category(CAT_INTERFACE)
@@ -148,8 +161,6 @@ static int cfg_get_mouse_button(vlc_object_t *p_obj, const char *cfg, int defaul
 
 static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mouse_old, const vlc_mouse_t *p_mouse_new)
 {
-    UNUSED(p_mouse_out);
-
     // we don't want to process anything if no mouse button was clicked
     if (p_mouse_new->i_pressed == 0 && !p_mouse_new->b_double_click) {
         return VLC_EGENERIC;
@@ -178,8 +189,24 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
         }
     }
 
-    // don't propagate any mouse change
-    return VLC_EGENERIC;
+    bool filter = false;
+    *p_mouse_out = *p_mouse_new;
+
+    // prevent fullscreen from toggling on double click
+    if (var_InheritBool(p_filter, DISABLE_FS_TOGGLE_CFG) && p_mouse_new->b_double_click) {
+        p_mouse_out->b_double_click = 0;
+        filter = true;
+    }
+
+    // toggle fullscreen on specified mouse click
+    const int fs_mouse_button = cfg_get_mouse_button((vlc_object_t *)p_filter, FS_TOGGLE_MOUSE_BUTTON_CFG,
+                                                     FS_TOGGLE_MOUSE_BUTTON_DEFAULT);
+    if (fs_mouse_button != -1 && vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, fs_mouse_button)) {
+        p_mouse_out->b_double_click = 1;
+        filter = true;
+    }
+
+    return filter ? VLC_SUCCESS : VLC_EGENERIC;
 }
 
 static picture_t *filter(filter_t *p_filter, picture_t *p_pic_in)
