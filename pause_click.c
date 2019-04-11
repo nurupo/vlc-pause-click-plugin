@@ -73,6 +73,12 @@ static const int mouse_button_values[] = {-1, MOUSE_BUTTON_LEFT, MOUSE_BUTTON_CE
 #define FS_TOGGLE_MOUSE_BUTTON_CFG CFG_PREFIX "fs-toggle-mouse-button"
 #define FS_TOGGLE_MOUSE_BUTTON_DEFAULT 0 // None
 
+#define DISABLE_CONTEXT_MENU_TOGGLE_CFG CFG_PREFIX "disable-context-menu-toggle"
+#define DISABLE_CONTEXT_MENU_TOGGLE_DEFAULT false
+
+#define CONTEXT_MENU_TOGGLE_MOUSE_BUTTON_CFG CFG_PREFIX "context-menu-toggle-mouse-button"
+#define CONTEXT_MENU_TOGGLE_MOUSE_BUTTON_DEFAULT 0 // None
+
 static int OpenFilter(vlc_object_t *);
 static void CloseFilter(vlc_object_t *);
 static int OpenInterface(vlc_object_t *);
@@ -117,6 +123,14 @@ vlc_module_begin()
     add_integer(FS_TOGGLE_MOUSE_BUTTON_CFG, FS_TOGGLE_MOUSE_BUTTON_DEFAULT,
                 N_("Assign fullscreen toggle to"),
                 N_("Assigns fullscreen toggle to a mouse button."), false)
+    change_integer_list(mouse_button_values_index, mouse_button_names)
+    add_bool(DISABLE_CONTEXT_MENU_TOGGLE_CFG, DISABLE_CONTEXT_MENU_TOGGLE_DEFAULT,
+             N_("Disable context menu toggle on right click"),
+             N_("The context menu will no longer pop up if you right click on the video. "
+             "Useful if you want to pause/play or full screen on right click."), false)
+    add_integer(CONTEXT_MENU_TOGGLE_MOUSE_BUTTON_CFG, CONTEXT_MENU_TOGGLE_MOUSE_BUTTON_DEFAULT,
+                N_("Assign context menu toggle to"),
+                N_("Assigns context menu toggle to a mouse button."), false)
     change_integer_list(mouse_button_values_index, mouse_button_names)
         add_submodule()
         set_capability("interface", 0)
@@ -203,6 +217,23 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
                                                      FS_TOGGLE_MOUSE_BUTTON_DEFAULT);
     if (fs_mouse_button != -1 && vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, fs_mouse_button)) {
         p_mouse_out->b_double_click = 1;
+        filter = true;
+    }
+
+    // prevent the context menu from toggling on right click
+    if (var_InheritBool(p_filter, DISABLE_CONTEXT_MENU_TOGGLE_CFG) &&
+            vlc_mouse_IsPressed(p_mouse_new, MOUSE_BUTTON_RIGHT)) {
+        p_mouse_out->i_pressed = 0;
+        filter = true;
+    }
+
+    // toggle context menu on specified mouse click
+    const int context_menu_mouse_button =
+            cfg_get_mouse_button((vlc_object_t *)p_filter,CONTEXT_MENU_TOGGLE_MOUSE_BUTTON_CFG,
+                                 CONTEXT_MENU_TOGGLE_MOUSE_BUTTON_DEFAULT);
+    if (context_menu_mouse_button != -1 &&
+            vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, context_menu_mouse_button)) {
+        vlc_mouse_SetPressed(p_mouse_out, MOUSE_BUTTON_RIGHT);
         filter = true;
     }
 
