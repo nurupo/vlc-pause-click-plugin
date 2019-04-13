@@ -12,11 +12,10 @@ if [ "$TARGET" = "Linux" ]; then
   if [ "$DEBIAN" = "wheezy-backports" ]; then
     # Debian Wheezy package repository was moved to Archive but the Docker image still links to the main repository
     RUN bash -c 'echo "
-                 deb http://snapshot.debian.org/archive/debian/20190321T212815Z wheezy main
-                 deb http://snapshot.debian.org/archive/debian-security/20190321T212815Z wheezy/updates main
-                 deb http://snapshot.debian.org/archive/debian/20190321T212815Z wheezy-updates main
+                 deb http://archive.debian.org/debian wheezy main
+                 deb http://archive.debian.org/debian-security wheezy/updates main
                  " > /etc/apt/sources.list'
-    RUN bash -c 'echo "deb http://snapshot.debian.org/archive/debian/20190321T212815Z wheezy-backports main" > /etc/apt/sources.list.d/backports.list'
+    RUN bash -c 'echo "deb http://archive.debian.org/debian wheezy-backports main" > /etc/apt/sources.list.d/backports.list'
     RUN bash -c 'echo "Acquire::Check-Valid-Until false;" > /etc/apt/apt.conf.d/10-nocheckvalid'
   fi
   RUN apt-get update
