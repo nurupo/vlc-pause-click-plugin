@@ -1,0 +1,27 @@
+custom:
+    # PayPal donation button is superior to a paypal.me link because it
+    # additionally:
+    #   - accepts credit cards without a need to create a PayPal account
+    #   - allows monthly subscriptions (requires a PayPal account)
+    # However, the URL is rather lengthy and GitHub shows it in full in the
+    # Sponsor modal popup.
+  - https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9HJHAH5UDL3GL
+    # GitHub doesn't allow using URIs in FUNDING.yml, so instead of using a
+    # Bitcoin URI we have to resort to using a blockchain explorer link.
+    #
+    # Blockstream has zero ads on its page, so let's use that, I guess. I have
+    # to trust them not to redirect this page to someone else's wallet as a
+    # person donating would likely copy the address off the Blockstream web page
+    # rather than from the URL GitHub shows the user.
+  - https://blockstream.info/address/34qxFsZjs1ZWVBwer11gXiycpv7QHTA8q3
+
+# At some point I should setup a static page with donation information and link
+# to that instead of listing the donation methods here. That way I could hide
+# the long PayPal link under a clickable PayPal donation button and use Bitcoin
+# URI directly. I could put all of that into every README instead, and I
+# actually might at some point, but the Sponsor button on GitHub stands out way
+# more than a Donate section in a README, and it's easier to keep up to date -
+# just replace a single file instead of having to manually edit every README, at
+# least until I make a static page for donations that I link to in READMEs, then
+# there would be no reason to edit them, so I decided not to touch READMEs until
+# I have the static page setup.
