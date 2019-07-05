@@ -14,6 +14,7 @@ Works nicely with "double-click to fullscreen" too, if you enable ["Ignore doubl
     - [Arch Linux](#arch-linux)
 - [Usage](#usage)
 - [Troubleshooting](#troubleshooting)
+- [License](#license)
 
 ## Supported versions of VLC
 VLC 2.1, 2.2 and 3.0 are supported.
@@ -118,3 +119,6 @@ Look at the screenshots.
 - Some users [have reported](https://github.com/nurupo/vlc-pause-click-plugin/issues/45#issuecomment-418964880) that they had to re-install VLC and select "Delete preferences and cache" in the installer for the plugin to work.
 
 If the issue persists, open an Issue in this repository and I will try to help.
+
+## License
+LGPLv2.1+
