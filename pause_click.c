@@ -30,16 +30,23 @@
 # define N_(str) (str)
 #endif
 
+#include <vlc/libvlc_version.h>
+
 #include <vlc_atomic.h>
 #include <vlc_common.h>
 #include <vlc_filter.h>
 #include <vlc_input.h>
 #include <vlc_mouse.h>
+#if LIBVLC_VERSION_MAJOR >= 3
+# include <vlc_vout.h>
+#endif
+#include <vlc_vout_osd.h>
 #include <vlc_playlist.h>
 #include <vlc_plugin.h>
+#if LIBVLC_VERSION_MAJOR == 2
+# include <vlc_spu.h>
+#endif
 #include <vlc_threads.h>
-
-#include <vlc/libvlc_version.h>
 
 #if LIBVLC_VERSION_MAJOR == 2 && LIBVLC_VERSION_MINOR == 1
 # include "vlc_interface-2.1.0-git.h"
@@ -79,6 +86,9 @@ static const int mouse_button_values[] = {-1, MOUSE_BUTTON_LEFT, MOUSE_BUTTON_CE
 
 #define CONTEXT_MENU_TOGGLE_MOUSE_BUTTON_CFG CFG_PREFIX "context-menu-toggle-mouse-button"
 #define CONTEXT_MENU_TOGGLE_MOUSE_BUTTON_DEFAULT 0 // None
+
+#define DISPLAY_ICON_CFG CFG_PREFIX "display-icon"
+#define DISPLAY_ICON_DEFAULT true
 
 static int OpenFilter(vlc_object_t *);
 static void CloseFilter(vlc_object_t *);
@@ -133,6 +143,10 @@ vlc_module_begin()
                 N_("Assign context menu toggle to"),
                 N_("Assigns context menu toggle to a mouse button."), false)
     change_integer_list(mouse_button_values_index, mouse_button_names)
+    add_bool(DISPLAY_ICON_CFG, DISPLAY_ICON_DEFAULT,
+             N_("Display pause and play icons on the video"),
+             N_("Overlay pause (\xE2\x96\xB6) and play (\xE2\x8F\xB8) icons "
+             "on the video when it's paused and played respectively."), false)
         add_submodule()
         set_capability("interface", 0)
         set_category(CAT_INTERFACE)
@@ -180,6 +194,38 @@ static bool is_in_menu(void) {
     return false;
 }
 
+static void display_icon(short icon) {
+    if (!p_intf) {
+        return;
+    }
+
+    playlist_t* p_playlist = pl_Get(p_intf);
+
+    input_thread_t* p_input = playlist_CurrentInput(p_playlist);
+    if (!p_input) {
+        return;
+    }
+
+    vout_thread_t** pp_vout;
+    size_t i_vout;
+    if (input_Control(p_input, INPUT_GET_VOUTS, &pp_vout, &i_vout) != VLC_SUCCESS) {
+        vlc_object_release(p_input);
+        return;
+    }
+    for (size_t i = 0; i < i_vout; i ++) {
+        vout_OSDIcon(pp_vout[i],
+#if LIBVLC_VERSION_MAJOR == 2
+                     SPU_DEFAULT_CHANNEL,
+#elif LIBVLC_VERSION_MAJOR >= 3
+                     VOUT_SPU_CHANNEL_OSD,
+#endif
+                     icon);
+        vlc_object_release((vlc_object_t *)pp_vout[i]);
+    }
+    vlc_object_release(p_input);
+    free(pp_vout);
+}
+
 static void pause_play(void)
 {
     if (!p_intf) {
@@ -191,8 +237,11 @@ static void pause_play(void)
     }
 
     playlist_t* p_playlist = pl_Get(p_intf);
-    playlist_Control(p_playlist,
-                     (playlist_Status(p_playlist) == PLAYLIST_RUNNING ? PLAYLIST_PAUSE : PLAYLIST_PLAY), 0);
+    playlist_status_t status = playlist_Status(p_playlist);
+    playlist_Control(p_playlist, status == PLAYLIST_RUNNING ? PLAYLIST_PAUSE : PLAYLIST_PLAY , 0);
+    if (var_InheritBool(p_intf, DISPLAY_ICON_CFG)) {
+        display_icon(status == PLAYLIST_RUNNING ? OSD_PAUSE_ICON : OSD_PLAY_ICON);
+    }
 }
 
 static void timer_callback(void* data)
