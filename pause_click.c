@@ -33,6 +33,7 @@
 #include <vlc_atomic.h>
 #include <vlc_common.h>
 #include <vlc_filter.h>
+#include <vlc_input.h>
 #include <vlc_mouse.h>
 #include <vlc_playlist.h>
 #include <vlc_plugin.h>
@@ -140,9 +141,52 @@ vlc_module_begin()
 vlc_module_end()
 
 
+static bool is_in_menu(void) {
+    if (!p_intf) {
+        return false;
+    }
+
+    playlist_t* p_playlist = pl_Get(p_intf);
+
+    input_title_t* p_title = NULL;
+    int i_title_id = -1;
+
+    input_thread_t* p_input = playlist_CurrentInput(p_playlist);
+    if (!p_input) {
+        return false;
+    }
+    if (input_Control(p_input, INPUT_GET_TITLE_INFO, &p_title, &i_title_id) != VLC_SUCCESS) {
+        vlc_object_release(p_input);
+        return false;
+    }
+    vlc_object_release(p_input);
+
+    if (!p_title) {
+        return false;
+    }
+    if (
+#if LIBVLC_VERSION_MAJOR == 2
+        p_title->b_menu
+#elif LIBVLC_VERSION_MAJOR >= 3
+        p_title->i_flags & INPUT_TITLE_MENU || p_title->i_flags & INPUT_TITLE_INTERACTIVE
+#endif
+    ) {
+        vlc_input_title_Delete(p_title);
+        return true;
+    }
+
+    vlc_input_title_Delete(p_title);
+
+    return false;
+}
+
 static void pause_play(void)
 {
-    if (p_intf == NULL) {
+    if (!p_intf) {
+        return;
+    }
+
+    if (is_in_menu()) {
         return;
     }
 
