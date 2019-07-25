@@ -37,16 +37,19 @@
 #include <vlc_filter.h>
 #include <vlc_input.h>
 #include <vlc_mouse.h>
-#if LIBVLC_VERSION_MAJOR >= 3
-# include <vlc_vout.h>
+#if LIBVLC_VERSION_MAJOR >= 4
+# include <vlc_player.h>
 #endif
-#include <vlc_vout_osd.h>
 #include <vlc_playlist.h>
 #include <vlc_plugin.h>
 #if LIBVLC_VERSION_MAJOR == 2
 # include <vlc_spu.h>
 #endif
 #include <vlc_threads.h>
+#if LIBVLC_VERSION_MAJOR >= 3
+# include <vlc_vout.h>
+#endif
+#include <vlc_vout_osd.h>
 
 #if LIBVLC_VERSION_MAJOR == 2 && LIBVLC_VERSION_MINOR == 1
 # include "vlc_interface-2.1.0-git.h"
@@ -160,6 +163,7 @@ static bool is_in_menu(void) {
         return false;
     }
 
+#if 2 <= LIBVLC_VERSION_MAJOR && LIBVLC_VERSION_MAJOR <= 3
     playlist_t* p_playlist = pl_Get(p_intf);
 
     input_title_t* p_title = NULL;
@@ -192,6 +196,21 @@ static bool is_in_menu(void) {
     vlc_input_title_Delete(p_title);
 
     return false;
+#elif LIBVLC_VERSION_MAJOR >= 4
+    vlc_player_t* player = vlc_playlist_GetPlayer(vlc_intf_GetMainPlaylist(p_intf));
+    vlc_player_Lock(player);
+
+    const struct vlc_player_title* title = vlc_player_GetSelectedTitle(player);
+    vlc_player_Unlock(player);
+    if (!title) {
+        return false;
+    }
+    if (title->flags & VLC_PLAYER_TITLE_MENU || title->flags & VLC_PLAYER_TITLE_INTERACTIVE) {
+        return true;
+    }
+
+    return false;
+#endif
 }
 
 static void display_icon(short icon) {
@@ -199,6 +218,7 @@ static void display_icon(short icon) {
         return;
     }
 
+#if 2 <= LIBVLC_VERSION_MAJOR && LIBVLC_VERSION_MAJOR <= 3
     playlist_t* p_playlist = pl_Get(p_intf);
 
     input_thread_t* p_input = playlist_CurrentInput(p_playlist);
@@ -224,6 +244,25 @@ static void display_icon(short icon) {
     }
     vlc_object_release(p_input);
     free(pp_vout);
+#elif LIBVLC_VERSION_MAJOR >= 4
+    vlc_player_t* player = vlc_playlist_GetPlayer(vlc_intf_GetMainPlaylist(p_intf));
+    vlc_player_Lock(player);
+
+    vout_thread_t** pp_vout;
+    size_t i_vout;
+    pp_vout = vlc_player_vout_HoldAll(player, &i_vout);
+    if (!pp_vout) {
+        vlc_player_Unlock(player);
+        return;
+    }
+    for (size_t i = 0; i < i_vout; i ++) {
+        vout_OSDIcon(pp_vout[i], VOUT_SPU_CHANNEL_OSD, icon);
+        vout_Release(pp_vout[i]);
+    }
+
+    vlc_player_Unlock(player);
+    free(pp_vout);
+#endif
 }
 
 static void pause_play(void)
@@ -236,12 +275,23 @@ static void pause_play(void)
         return;
     }
 
+#if 2 <= LIBVLC_VERSION_MAJOR && LIBVLC_VERSION_MAJOR <= 3
     playlist_t* p_playlist = pl_Get(p_intf);
     playlist_status_t status = playlist_Status(p_playlist);
     playlist_Control(p_playlist, status == PLAYLIST_RUNNING ? PLAYLIST_PAUSE : PLAYLIST_PLAY , 0);
     if (var_InheritBool(p_intf, DISPLAY_ICON_CFG)) {
         display_icon(status == PLAYLIST_RUNNING ? OSD_PAUSE_ICON : OSD_PLAY_ICON);
     }
+#elif LIBVLC_VERSION_MAJOR >= 4
+    vlc_player_t* player = vlc_playlist_GetPlayer(vlc_intf_GetMainPlaylist(p_intf));
+    vlc_player_Lock(player);
+    int state = vlc_player_GetState(player);
+    state == VLC_PLAYER_STATE_PLAYING ? vlc_player_Pause(player) : vlc_player_Resume(player);
+    vlc_player_Unlock(player);
+    if (var_InheritBool(p_intf, DISPLAY_ICON_CFG)) {
+        display_icon(state == VLC_PLAYER_STATE_PLAYING ? OSD_PAUSE_ICON : OSD_PLAY_ICON);
+    }
+#endif
 }
 
 static void timer_callback(void* data)
