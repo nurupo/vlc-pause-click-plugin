@@ -19,6 +19,8 @@ matrix:
       env: TARGET=Windows VLC_VERSION=2.2
     - os: linux
       env: TARGET=Windows VLC_VERSION=3.0
+    - os: linux
+      env: TARGET=Windows VLC_VERSION=4.0
     - os: osx
       env: TARGET=macOS   VLC_VERSION=2.1
       language: c
@@ -29,6 +31,10 @@ matrix:
       osx_image: xcode7.3
     - os: osx
       env: TARGET=macOS   VLC_VERSION=3.0
+      language: c
+      osx_image: xcode7.3
+    - os: osx
+      env: TARGET=macOS   VLC_VERSION=4.0
       language: c
       osx_image: xcode7.3
 

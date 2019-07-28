@@ -5,7 +5,7 @@
 It's a lot easier to build Windows plugin binaries using Docker than following [the build instructions](../BUILD.md), as everything is already automated for you.
 That's also the way I build Windows binaries that I release.
 
-The Dockerfile provided in this directory sets up a container image for building all versions of the plugin: 2.1, 2.2 and 3.0, both 32-bit and 64-bit ones.
+The Dockerfile provided in this directory sets up a container image for building all versions of the plugin: 2.1, 2.2, 3.0 and 4.0, both 32-bit and 64-bit ones.
 Once the image is created, you don't have to re-create it if you change plugin source code, it will pickup any changes in code you make.
 
 ### Building
@@ -44,7 +44,7 @@ You should see the binaries getting created in the directory you specified to be
 
 ### Building only selected versions of the plugin
 
-If for some reason you don't want to build all of the 4 versions of the plugin binaries, you can specify which exact version you want to build by replacing "all" in the `docker run` command with "[2.1|2.2|3.0] [32|64]".
+If for some reason you don't want to build all of the 4 versions of the plugin binaries, you can specify which exact version you want to build by replacing "all" in the `docker run` command with "[2.1|2.2|3.0|4.0] [32|64]".
 For example, if you want to build only the VLC 2.2 32-bit version of the plugin, you would run
 
 ```bash

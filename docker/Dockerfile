@@ -4,6 +4,7 @@ RUN apt-get update && \
     apt-get install -y \
         gcc-mingw-w64-i686 \
         gcc-mingw-w64-x86-64 \
+        lynx \
         make \
         p7zip \
         pkg-config \
@@ -16,9 +17,6 @@ RUN apt-get update && \
     wget https://download.videolan.org/pub/videolan/vlc/3.0.0/win64/vlc-3.0.0-win64.7z -O vlc-3.0.0-win64.7z && \
     7zr x "*.7z" -o* "*/sdk" && \
     rm *.7z && \
-    apt-get purge -y \
-        p7zip \
-        wget && \
     apt-get clean && \
     apt-get autoremove -y && \
     rm -rf \
