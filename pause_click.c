@@ -206,14 +206,16 @@ static bool is_in_menu(void) {
     vlc_player_Lock(player);
 
     const struct vlc_player_title* title = vlc_player_GetSelectedTitle(player);
-    vlc_player_Unlock(player);
     if (!title) {
+        vlc_player_Unlock(player);
         return false;
     }
     if (title->flags & VLC_PLAYER_TITLE_MENU || title->flags & VLC_PLAYER_TITLE_INTERACTIVE) {
+        vlc_player_Unlock(player);
         return true;
     }
 
+    vlc_player_Unlock(player);
     return false;
 #endif
 }
