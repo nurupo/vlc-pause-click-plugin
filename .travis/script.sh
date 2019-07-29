@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-echo_readme() {
-  echo "This plugin was built for VLC 4.0, a nightly, i.e. in-development version of VLC." \
+echo_nightly_readme() {
+  echo "This plugin was built for a nightly, in-development version of VLC." \
        "The development version of VLC often breaks ABI, making the plugin built for it non-functional in newer VLC builds." \
-       "Meaning that a plugin targeting a VLC 4.0 build done today might not work with tomorrow's build of VLC 4.0." \
-       "Thus it's recommended that you use the specific VLC 4.0 build this plugin was made for: $1" | fold -sw 80
+       "Meaning that a plugin targeting a nightly VLC built today might not work with a nightly VLC built tomorrow." \
+       "Thus it's recommended that you use the specific nightly VLC build this plugin was made for: $1" | fold -sw 80
 }
 
 if [ "$TARGET" = "Linux" ]; then
@@ -52,10 +52,12 @@ elif [ "$TARGET" = "Windows" ]; then
   # there should be exactly two dlls built, one for 32-bit VLC and another for 64-bit
   [ $(find ./build -name "*.dll" | wc -l) = "2" ] || false
   cd build
-  echo_readme "$(cat $VLC_VERSION/32/VLC_DOWNLOAD_URL.txt)" > "$VLC_VERSION/32/README.txt"
-  echo_readme "$(cat $VLC_VERSION/64/VLC_DOWNLOAD_URL.txt)" > "$VLC_VERSION/64/README.txt"
+  echo_nightly_readme "$(cat $VLC_VERSION/32/VLC_DOWNLOAD_URL.txt)" > "$VLC_VERSION/32/README.txt"
+  echo_nightly_readme "$(cat $VLC_VERSION/64/VLC_DOWNLOAD_URL.txt)" > "$VLC_VERSION/64/README.txt"
   ./zip-it.sh
   cd ..
+  mkdir artifacts
+  cp -a build/*.zip artifacts
 elif [ "$TARGET" = "macOS" ]; then
   brew update
   brew install p7zip
@@ -121,9 +123,11 @@ elif [ "$TARGET" = "macOS" ]; then
   make OS=macOS
   if [ "$VLC_VERSION" = "4.0" ]; then
     echo "$LATEST_MACOS_DIR_URL" > VLC_DOWNLOAD_URL.txt
-    echo_readme "$(cat VLC_DOWNLOAD_URL.txt)" > "README.txt"
+    echo_nightly_readme "$(cat VLC_DOWNLOAD_URL.txt)" > "README.txt"
     zip -j vlc-$VLC_VERSION-macosx.zip libpause_click_plugin.dylib VLC_DOWNLOAD_URL.txt README.txt
   else
     zip -j vlc-$VLC_VERSION-macosx.zip libpause_click_plugin.dylib
   fi
+  mkdir artifacts
+  cp -a vlc-$VLC_VERSION-macosx.zip artifacts
 fi
