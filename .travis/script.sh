@@ -93,7 +93,7 @@ elif [ "$TARGET" = "macOS" ]; then
     rm -rf ./vlc-$VLC_VERSION.0-win64*
   else
     wget https://download.videolan.org/pub/videolan/vlc/$VLC_VERSION.0/macosx/vlc-$VLC_VERSION.0.dmg
-    # extracting contents of a .dmg file using 7-zip is more of a hack, and while it works 7z exits with an error code we want to supress
+    # extracting contents of a .dmg file using 7-zip is more of a hack, and while it works 7z exits with an error code we want to suppress
     7z x "*.dmg" "*/VLC.app/Contents/MacOS" || true
     mv */VLC.app/Contents/MacOS/lib ..
     mv */VLC.app/Contents/MacOS/include ..
@@ -101,7 +101,7 @@ elif [ "$TARGET" = "macOS" ]; then
     rm -rf ./tmp
     # in contrast to Windows VLC including a very nice and complete sdk directory,
     # macOS VLC doesn't package .pc files, plugin headers and in 2.1.0 libvlc_version.h is not generated off libvlc_version.h.in.
-    # it just packags libvlc.dylib, libvlccore.dylib and libvlc headers.
+    # it just packages libvlc.dylib, libvlccore.dylib and libvlc headers.
     # honestly, wtf VLC team, get your game together.
     # we grab the missing pieces from the Windows VLC, there shouldn't be anything platform-specific in those so it should work
     wget https://download.videolan.org/pub/videolan/vlc/$VLC_VERSION.0/win64/vlc-$VLC_VERSION.0-win64.7z -O vlc-$VLC_VERSION.0-win64.7z
