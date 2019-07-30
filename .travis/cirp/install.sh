@@ -7,7 +7,9 @@
 
 # Get Python >=3.5
 if [ "$TRAVIS_OS_NAME" == "osx" ]; then
-  brew update
+  until brew update; do
+    sleep 30
+  done
 
   # Upgrade Python 2 to Python 3
   brew upgrade python || true
