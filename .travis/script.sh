@@ -59,7 +59,8 @@ elif [ "$TARGET" = "Windows" ]; then
   mkdir artifacts
   cp -a build/*.zip artifacts
 elif [ "$TARGET" = "macOS" ]; then
-  brew update
+  # updating fails sometimes, unable to fetch data off homebrew GitHub repo, so retry a few times
+  brew update || brew update || brew update || brew update || brew update
   brew install p7zip
   mkdir -p tmp/tmp
   cd tmp/tmp
