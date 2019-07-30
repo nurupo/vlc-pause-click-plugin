@@ -1,7 +1,7 @@
 # Pause Click plugin for VLC
 VLC plugin that allows you to pause/play a video by clicking on the video image.
 
-Works nicely with "double-click to fullscreen" too, if you enable ["Ignore double clicks" option in the settings](http://i.imgur.com/eu8LGqA.png).
+Works nicely with "double-click to fullscreen" too, if you enable ["Ignore double clicks" option in the settings](http://i.imgur.com/iDtLJpe.png).
 
 ## Table of contents
 
@@ -95,12 +95,12 @@ If these build instructions don't work for you (perhaps you are using a non-Debi
 There is a `vlc-pause-click-plugin` package [available](https://aur.archlinux.org/packages/vlc-pause-click-plugin/) in the AUR repository.
 
 ## Usage
-1. Restart VLC to load the newly added plugin [[screenshot]](http://i.imgur.com/6oTRtD8.png)
-2. Go into advanced preferences: Tools -> Preferences -> Show settings -> All [[screenshot]](http://i.imgur.com/ONLskiX.png) [[screenshot]](http://i.imgur.com/V7ql7HR.png)
-3. Enable/Disable the plugin with a checkbox: (in advanced preferences) Interface -> Control Interfaces -> Pause/Play video on mouse click [[screenshot]](http://i.imgur.com/aMkGRRK.png)
-4. Enable/Disable the plugin with a checkbox: (in advanced preferences) Video -> Filters -> Pause/Play video on mouse click [[screenshot]](http://i.imgur.com/U5TZpDp.png)
-5. Change the plugin settings however you like: (in advanced preferences) Video -> Filters -> Pause click [[screenshot]](http://i.imgur.com/eu8LGqA.png)
-6. Restart VLC for settings to take place [[screenshot]](http://i.imgur.com/6oTRtD8.png)
+1. Restart VLC to load the newly added plugin [[screenshot]](http://i.imgur.com/G2QAK17.png)
+2. Go into advanced preferences: Tools -> Preferences -> Show settings -> All [[screenshot]](http://i.imgur.com/QqORpID.png) [[screenshot]](http://i.imgur.com/RWLYX5g.png)
+3. Enable/Disable the plugin with a checkbox: (in advanced preferences) Interface -> Control Interfaces -> Pause/Play video on mouse click [[screenshot]](http://i.imgur.com/m9yF5Px.png)
+4. Enable/Disable the plugin with a checkbox: (in advanced preferences) Video -> Filters -> Pause/Play video on mouse click [[screenshot]](http://i.imgur.com/OZLqmI6.png)
+5. Change the plugin settings however you like: (in advanced preferences) Video -> Filters -> Pause click [[screenshot]](http://i.imgur.com/iDtLJpe.png)
+6. Restart VLC for settings to take place [[screenshot]](http://i.imgur.com/G2QAK17.png)
 7. Play a video
 8. Click on video picture to pause/play the video
 
