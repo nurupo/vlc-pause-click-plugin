@@ -24,10 +24,12 @@ However, there is [a lua extension](https://github.com/3demax/vlc-clickpause) th
 
 Support for the newer VLC versions will be available as they get released and as I get time to work on it.
 
-Nightly development version of VLC (VLC 4.0) is not officially supported as it hasn't been released yet.
-The development version of VLC often breaks ABI, making the plugin built for it non-functional in newer VLC builds.
-Meaning that if I release the plugin targeting VLC 4.0 build that was done today, the plugin might not work with tomorrow's build of VLC 4.0 that you might use.
-If you feel adventurous, you could try building this plugin for the specific VLC 4.0 revision that you use yourself, it might require some code fixes but shouldn't be very hard if you are familiar with C development.
+There is an experimental support for the nightly, in-development version of VLC (VLC 4.0).
+The development version of VLC often breaks both API and ABI, which can result in the plugin failing to build and the plugin built for nightly VLC of today be non-functional in newer nightly VLC builds.
+Due to this, the support for nightly VLC is very limited and low-priority.
+The plugin is not guaranteed to work correctly with it, or even work at all.
+If the plugin breaks to build against newer nightly VLC versions, it might not get fixed for quite some time.
+It's also quite possible that nightly VLC could have its own bugs that prevent the plugin from working that are out of my control to fix.
 
 ## Install
 
@@ -39,6 +41,8 @@ Version/Bitness | VLC 32 bit | VLC 64 bit
 VLC 2.1 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.0.0/vlc-2.1-32bit-win.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.0.0/vlc-2.1-64bit-win.zip)
 VLC 2.2 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.0.0/vlc-2.2-32bit-win.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.0.0/vlc-2.2-64bit-win.zip)
 VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.0.0/vlc-3.0-32bit-win.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.0.0/vlc-3.0-64bit-win.zip)
+
+For the nightly VLC 4.0 [see the nightly builds](https://github.com/nurupo/vlc-pause-click-plugin-nlightly-builds).
 
 Extract the archive at `{VLC}\plugins\video_filter\`, where `{VLC}` is the directory the VLC was installed into, for example `C:\Program Files (x86)\VideoLAN\VLC\`.
 
@@ -55,6 +59,8 @@ Version/Bitness | VLC 64 bit
 VLC 2.1 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.0.0/vlc-2.1-macosx.zip)
 VLC 2.2 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.0.0/vlc-2.2-macosx.zip)
 VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.0.0/vlc-3.0-macosx.zip)
+
+For the nightly VLC 4.0 [see the nightly builds](https://github.com/nurupo/vlc-pause-click-plugin-nlightly-builds).
 
 Extract the archive at `/Applications/VLC.app/Contents/MacOS/plugins/`
 
