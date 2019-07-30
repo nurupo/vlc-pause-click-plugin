@@ -153,8 +153,8 @@ vlc_module_begin()
     change_integer_list(mouse_button_values_index, mouse_button_names)
     add_bool(DISPLAY_ICON_CFG, DISPLAY_ICON_DEFAULT,
              N_("Display pause and play icons on the video"),
-             N_("Overlay pause (\xE2\x96\xB6) and play (\xE2\x8F\xB8) icons "
-             "on the video when it's paused and played respectively."), false)
+             N_("Overlay pause and play icons on the video when it's paused and "
+             "played respectively."), false)
         add_submodule()
         set_capability("interface", 0)
         set_category(CAT_INTERFACE)
