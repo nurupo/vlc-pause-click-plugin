@@ -10,6 +10,8 @@ env:
   global:
     - CIRP_GITHUB_REPO_SLUG="nurupo/vlc-pause-click-plugin-nlightly-builds"
 
+if: (branch != nightly && type != cron) || (branch == nightly && type == cron)
+
 matrix:
   include:
     - stage: Build
