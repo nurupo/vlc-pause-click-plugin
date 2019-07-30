@@ -89,7 +89,7 @@ sudo make install
 
 Then follow [the usage instructions](#usage) below.
 
-If these build instructions don't work for you (perhaps you are using a non-Debian-derived Linux distribuion), [there are more generic build instructions available](/BUILD.md).
+If these build instructions don't work for you (perhaps you are using a non-Debian-derived Linux distribution), [there are more generic build instructions available](/BUILD.md).
 
 #### Arch Linux
 There is a `vlc-pause-click-plugin` package [available](https://aur.archlinux.org/packages/vlc-pause-click-plugin/) in the AUR repository.
