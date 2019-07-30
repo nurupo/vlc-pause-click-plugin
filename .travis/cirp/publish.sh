@@ -22,7 +22,7 @@ echo "This is an auto-generated release based on [Travis-CI build #${TRAVIS_BUIL
 
 ---
 
-For a better compatibility, use plugins only with the specified versions of nightly VLC
+For the best compatibility, use plugins only with versions of nightly VLC specified in the table below
 
 | Plugin | Nightly VLC Download Link |
 |--------|---------------------------|" > RELEASE_BODY.txt
