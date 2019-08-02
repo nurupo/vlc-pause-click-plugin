@@ -42,7 +42,7 @@ VLC 2.1 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/d
 VLC 2.2 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-2.2-32bit-win.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-2.2-64bit-win.zip)
 VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-3.0-32bit-win.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-3.0-64bit-win.zip)
 
-For the nightly VLC 4.0 [see the nightly builds](https://github.com/nurupo/vlc-pause-click-plugin-nlightly-builds).
+For the nightly VLC 4.0 [see the nightly builds](https://github.com/nurupo/vlc-pause-click-plugin-nightly-builds).
 
 Extract the archive at `{VLC}\plugins\video_filter\`, where `{VLC}` is the directory the VLC was installed into, for example `C:\Program Files (x86)\VideoLAN\VLC\`.
 
@@ -60,7 +60,7 @@ VLC 2.1 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/d
 VLC 2.2 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-2.2-macosx.zip)
 VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-3.0-macosx.zip)
 
-For the nightly VLC 4.0 [see the nightly builds](https://github.com/nurupo/vlc-pause-click-plugin-nlightly-builds).
+For the nightly VLC 4.0 [see the nightly builds](https://github.com/nurupo/vlc-pause-click-plugin-nightly-builds).
 
 Extract the archive at `/Applications/VLC.app/Contents/MacOS/plugins/`
 

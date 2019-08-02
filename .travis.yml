@@ -8,7 +8,7 @@ services:
 
 env:
   global:
-    - CIRP_GITHUB_REPO_SLUG="nurupo/vlc-pause-click-plugin-nlightly-builds"
+    - CIRP_GITHUB_REPO_SLUG="nurupo/vlc-pause-click-plugin-nightly-builds"
 
 if: (branch != nightly && type != cron) || (branch == nightly && type == cron)
 
