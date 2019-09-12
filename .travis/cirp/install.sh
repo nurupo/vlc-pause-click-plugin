@@ -50,9 +50,9 @@ check_sha256()
 if ! pip3 list --format=columns | grep '^ci-release-publisher '; then
   cd .
   cd "$(mktemp -d)"
-  VERSION="0.2.0a3"
+  VERSION="0.2.0a4"
   FILENAME="ci_release_publisher-$VERSION-py3-none-any.whl"
-  HASH="399d0c645ea115d72c646c87e3b4094af04018c5bcb6a95abed4c09cdeec8bd3"
+  HASH="0d5dff991bad83b2f06bfac8fa5ddd4b9789a076950adc15eb3838a7665bf964"
   pip3 download ci_release_publisher==$VERSION
   check_sha256 "$HASH" "$FILENAME"
   pip3 install --no-index --find-links "$PWD" "$FILENAME"
