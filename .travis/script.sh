@@ -76,6 +76,7 @@ elif [ "$TARGET" = "macOS" ]; then
       echo "Error: Weren't able to find the .dmg file for VLC $VLC_VERSION"
       exit 1
     fi
+    brew reinstall wget openssl
     wget "$LATEST_MACOS_FILE_URL"
     7z x "*.dmg" "*/VLC.app/Contents/Frameworks" || true
     mkdir ../lib
