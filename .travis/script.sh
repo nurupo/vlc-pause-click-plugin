@@ -52,8 +52,10 @@ elif [ "$TARGET" = "Windows" ]; then
   # there should be exactly two dlls built, one for 32-bit VLC and another for 64-bit
   [ $(find ./build -name "*.dll" | wc -l) = "2" ] || false
   cd build
-  echo_nightly_readme "$(cat $VLC_VERSION/32/VLC_DOWNLOAD_URL.txt)" > "$VLC_VERSION/32/README.txt"
-  echo_nightly_readme "$(cat $VLC_VERSION/64/VLC_DOWNLOAD_URL.txt)" > "$VLC_VERSION/64/README.txt"
+  if [ "$VLC_VERSION" = "4.0" ]; then
+    echo_nightly_readme "$(cat $VLC_VERSION/32/VLC_DOWNLOAD_URL.txt)" > "$VLC_VERSION/32/README.txt"
+    echo_nightly_readme "$(cat $VLC_VERSION/64/VLC_DOWNLOAD_URL.txt)" > "$VLC_VERSION/64/README.txt"
+  fi
   ./zip-it.sh
   cd ..
   mkdir artifacts
