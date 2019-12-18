@@ -27,7 +27,7 @@ elif [ "$TRAVIS_OS_NAME" == "linux" ]; then
   python3 --version || true
   pyenv versions || true
 
-  pyenv global 3.6.7
+  pyenv global $(pyenv versions | grep -o ' 3\.[5-99]\.[1-99]' | tail -n1)
 fi
 
 pip3 install --upgrade pip
