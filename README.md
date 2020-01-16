@@ -126,5 +126,20 @@ Look at the screenshots.
 
 If the issue persists, open an Issue in this repository and I will try to help.
 
+### Green video image
+
+It has [been reported](https://github.com/nurupo/vlc-pause-click-plugin/issues/58) that in some configurations (Windows + d3d11 hardware-accelerated decoding + Nvidia graphics) the plugin causes the video image to turn green when playing certain video formats.
+
+There are several possible workarounds:
+
+
+- Disable hardware-accelerated decoding.
+
+  You can do so in: Tools -> Preferences -> (Simple) -> Input / Codecs -> Hardware-accelerated decoding
+- Enable filters with "D3D11" in their name: Tools -> Preferences -> (All) -> Video -> Filters
+
+  Note that this results in x2 GPU usage.
+- If you have Intel integrated graphics, you could try making VLC use that for its hardware-accelerated decoding.
+
 ## License
 LGPLv2.1+
