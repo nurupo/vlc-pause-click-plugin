@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Troubleshooting
+    url: https://github.com/nurupo/vlc-pause-click-plugin#troubleshooting
+    about: A list of common issues and solutions to them
