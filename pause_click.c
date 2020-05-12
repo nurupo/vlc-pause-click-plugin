@@ -334,9 +334,9 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
     // get mouse button from settings. updates if user changes the setting
     const int mouse_button = cfg_get_mouse_button((vlc_object_t *)p_filter, MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT);
 
+    // react only on the button click
     if (vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, mouse_button) ||
-            // on some systems (e.g. Linux) b_double_click is not set for a double-click, so we track any click and
-            // decide if it was a double click on our own. This provides the most uniform cross-platform behaviour.
+            // treat the double click as the left mouse button click
             (p_mouse_new->b_double_click && mouse_button == MOUSE_BUTTON_LEFT)) {
         // if ignoring double click
         if (var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG) && mouse_button == MOUSE_BUTTON_LEFT && timer_initialized) {
