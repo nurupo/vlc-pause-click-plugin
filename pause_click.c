@@ -34,7 +34,7 @@
 
 #if LIBVLC_VERSION_MAJOR >= 3
 # define VLC_MODULE_LICENSE VLC_LICENSE_LGPL_2_1_PLUS
-# define VLC_MODULE_COPYRIGHT "Copyright (C) 2014-2019 Maxim Biro"
+# define VLC_MODULE_COPYRIGHT "Copyright (C) 2014-2020 Maxim Biro"
 #endif
 
 #include <vlc_atomic.h>
