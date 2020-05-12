@@ -77,11 +77,14 @@ static const int mouse_button_values[] = {-1, MOUSE_BUTTON_LEFT, MOUSE_BUTTON_CE
 #define MOUSE_BUTTON_CFG CFG_PREFIX "mouse-button"
 #define MOUSE_BUTTON_DEFAULT 1 // MOUSE_BUTTON_LEFT
 
-#define IGNORE_DOUBLE_CLICK_CFG CFG_PREFIX "ignore-double-click"
-#define IGNORE_DOUBLE_CLICK_DEFAULT false
-
 #define DOUBLE_CLICK_DELAY_CFG CFG_PREFIX "double-click-delay"
 #define DOUBLE_CLICK_DELAY_DEFAULT 300
+
+#define ENABLE_DOUBLE_CLICK_DELAY_CFG CFG_PREFIX "enable-double-click-delay"
+#define ENABLE_DOUBLE_CLICK_DELAY_DEFAULT false
+
+#define IGNORE_DOUBLE_CLICK_CFG CFG_PREFIX "ignore-double-click"
+#define IGNORE_DOUBLE_CLICK_DEFAULT false
 
 #define DISABLE_FS_TOGGLE_CFG CFG_PREFIX "disable-fs-toggle"
 #define DISABLE_FS_TOGGLE_DEFAULT false
@@ -126,15 +129,22 @@ vlc_module_begin()
                 N_("Defines the mouse button that will pause/play the video."), false)
     vlc_config_set(VLC_CONFIG_LIST, (size_t)(sizeof(mouse_button_values_index)/sizeof(int))-1,
                    mouse_button_values_index+1, mouse_button_names+1);
-    add_bool(IGNORE_DOUBLE_CLICK_CFG, IGNORE_DOUBLE_CLICK_DEFAULT,
-             N_("Ignore double clicks"), N_("Useful if you don't want the video to "
-             "pause when double clicking to fullscreen. Note that enabling this "
-             "will delay pause/play action by the double click interval, so the "
-             "experience might not be as snappy as with this option disabled."), false)
     add_integer_with_range(DOUBLE_CLICK_DELAY_CFG, DOUBLE_CLICK_DELAY_DEFAULT,
-                           20, 5000, N_("Double click interval (milliseconds)"),
-                           N_("Two clicks made during this time interval will be "
-                           "treated as a double click and will be ignored."), false)
+                           20, 5000, N_("Custom double click interval (milliseconds)"),
+                           N_("Two clicks made during this time interval will "
+                           "be treated as a double click."), false)
+    add_bool(ENABLE_DOUBLE_CLICK_DELAY_CFG, ENABLE_DOUBLE_CLICK_DELAY_DEFAULT,
+             N_("Enable the custom double click interval"),
+             N_("Ignore system's double click interval and use our own instead. "
+             "Useful when you want to make the time interval of double clicking "
+             "to fullscreen be longer or shorter."), false)
+    add_bool(IGNORE_DOUBLE_CLICK_CFG, IGNORE_DOUBLE_CLICK_DEFAULT,
+             N_("Prevent pause/play from triggering on double click*"),
+             N_("Useful if you don't want the video to pause/play when double "
+             "clicking to fullscreen. Note that enabling this will delay "
+             "pause/play action by the double click interval, so the experience "
+             "might not be as snappy as with this option disabled."
+             "\n\n*Forces the use of the custom double click interval."), false)
     add_bool(DISABLE_FS_TOGGLE_CFG, DISABLE_FS_TOGGLE_DEFAULT,
              N_("Disable fullscreen toggle on double click"),
              N_("The video will no longer fullscreen if you double click on it. "
@@ -309,7 +319,10 @@ static void timer_callback(void* data)
         return;
     }
 
-    pause_play();
+    filter_t *p_filter = (filter_t *) data;
+    if (var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG)) {
+        pause_play();
+    }
 
     atomic_store(&timer_scheduled, false);
 }
@@ -337,33 +350,36 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
     bool filter = false;
     *p_mouse_out = *p_mouse_new;
 
-    // we manually control double click to fullscreen if the ignore double click option is set
-    if (var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG) && mouse_button == MOUSE_BUTTON_LEFT) {
+    // manually control double click to fullscreen if directly requested or if the ignore double click option is set
+    if ((var_InheritBool(p_filter, ENABLE_DOUBLE_CLICK_DELAY_CFG) || var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG)) &&
+            mouse_button == MOUSE_BUTTON_LEFT) {
         p_mouse_out->b_double_click = 0;
         filter = true;
     }
 
-
-    // react only on the button click
+    // react only on the configured mouse button click
     if (vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, mouse_button) ||
             // treat the double click as the left mouse button click
             (p_mouse_new->b_double_click && mouse_button == MOUSE_BUTTON_LEFT)) {
-        // if ignoring double click
-        if (var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG) && mouse_button == MOUSE_BUTTON_LEFT && timer_initialized) {
+        // pause/play on every click unless told not to
+        if (!var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG)) {
+            pause_play();
+        }
+        // do the double click logic
+        if ((var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG) || var_InheritBool(p_filter, ENABLE_DOUBLE_CLICK_DELAY_CFG)) &&
+                mouse_button == MOUSE_BUTTON_LEFT && timer_initialized) {
             if (atomic_load(&timer_scheduled)) {
-                // it's a double click -- cancel the scheduled pause/play, if any
+                // it's a double click -- cancel the scheduled timer
                 atomic_store(&timer_scheduled, false);
                 vlc_timer_schedule(timer, false, 0, 0);
                 // and set fullscreen
                 p_mouse_out->b_double_click = 1;
                 filter = true;
             } else {
-                // it might be a single click -- schedule pause/play call
+                // it might be a single click -- schedule a timer
                 atomic_store(&timer_scheduled, true);
                 vlc_timer_schedule(timer, false, var_InheritInteger(p_filter, DOUBLE_CLICK_DELAY_CFG)*1000, 0);
             }
-        } else {
-            pause_play();
         }
     }
 
@@ -411,12 +427,12 @@ static picture_t *filter(filter_t *p_filter, picture_t *p_pic_in)
 
 static int OpenFilter(vlc_object_t *p_this)
 {
-    filter_t *p_filter = (filter_t *)p_this;
+    filter_t *p_filter = (filter_t *) p_this;
 
     p_filter->pf_video_filter = filter;
     p_filter->pf_video_mouse = mouse;
 
-    if (vlc_timer_create(&timer, &timer_callback, NULL)) {
+    if (vlc_timer_create(&timer, &timer_callback, p_filter)) {
         return VLC_EGENERIC;
     }
     timer_initialized = true;
