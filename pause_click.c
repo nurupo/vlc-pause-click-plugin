@@ -125,10 +125,17 @@ vlc_module_begin()
     set_category(CAT_VIDEO)
     set_subcategory(SUBCAT_VIDEO_VFILTER)
     set_callbacks(OpenFilter, CloseFilter)
-    add_integer(MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT, N_("Mouse button"),
+    set_section(N_("General"), NULL)
+    add_integer(MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT,
+                N_("Pause/play mouse button"),
                 N_("Defines the mouse button that will pause/play the video."), false)
     vlc_config_set(VLC_CONFIG_LIST, (size_t)(sizeof(mouse_button_values_index)/sizeof(int))-1,
                    mouse_button_values_index+1, mouse_button_names+1);
+    add_bool(DISPLAY_ICON_CFG, DISPLAY_ICON_DEFAULT,
+             N_("Show pause/play icon animations"),
+             N_("Overlay pause and play icons on the video when it's paused and "
+             "played respectively."), false)
+    set_section(N_("Double click behavior"), NULL)
     add_integer_with_range(DOUBLE_CLICK_DELAY_CFG, DOUBLE_CLICK_DELAY_DEFAULT,
                            20, 5000, N_("Custom double click interval (milliseconds)"),
                            N_("Two clicks made during this time interval will "
@@ -145,6 +152,7 @@ vlc_module_begin()
              "pause/play action by the double click interval, so the experience "
              "might not be as snappy as with this option disabled."
              "\n\n*Forces the use of the custom double click interval."), false)
+    set_section(N_("Mouse button assignment"), NULL)
     add_bool(DISABLE_FS_TOGGLE_CFG, DISABLE_FS_TOGGLE_DEFAULT,
              N_("Disable fullscreen toggle on double click"),
              N_("The video will no longer fullscreen if you double click on it. "
@@ -161,10 +169,6 @@ vlc_module_begin()
                 N_("Assign context menu toggle to"),
                 N_("Assigns context menu toggle to a mouse button."), false)
     change_integer_list(mouse_button_values_index, mouse_button_names)
-    add_bool(DISPLAY_ICON_CFG, DISPLAY_ICON_DEFAULT,
-             N_("Display pause and play icons on the video"),
-             N_("Overlay pause and play icons on the video when it's paused and "
-             "played respectively."), false)
         add_submodule()
         set_capability("interface", 0)
         set_category(CAT_INTERFACE)
