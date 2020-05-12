@@ -339,7 +339,7 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
             // decide if it was a double click on our own. This provides the most uniform cross-platform behaviour.
             (p_mouse_new->b_double_click && mouse_button == MOUSE_BUTTON_LEFT)) {
         // if ignoring double click
-        if (var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG) && timer_initialized) {
+        if (var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG) && mouse_button == MOUSE_BUTTON_LEFT && timer_initialized) {
             if (atomic_load(&timer_scheduled)) {
                 // it's a double click -- cancel the scheduled pause/play, if any
                 atomic_store(&timer_scheduled, false);
