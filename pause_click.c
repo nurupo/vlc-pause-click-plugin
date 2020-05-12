@@ -334,6 +334,16 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
     // get mouse button from settings. updates if user changes the setting
     const int mouse_button = cfg_get_mouse_button((vlc_object_t *)p_filter, MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT);
 
+    bool filter = false;
+    *p_mouse_out = *p_mouse_new;
+
+    // we manually control double click to fullscreen if the ignore double click option is set
+    if (var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG) && mouse_button == MOUSE_BUTTON_LEFT) {
+        p_mouse_out->b_double_click = 0;
+        filter = true;
+    }
+
+
     // react only on the button click
     if (vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, mouse_button) ||
             // treat the double click as the left mouse button click
@@ -344,6 +354,9 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
                 // it's a double click -- cancel the scheduled pause/play, if any
                 atomic_store(&timer_scheduled, false);
                 vlc_timer_schedule(timer, false, 0, 0);
+                // and set fullscreen
+                p_mouse_out->b_double_click = 1;
+                filter = true;
             } else {
                 // it might be a single click -- schedule pause/play call
                 atomic_store(&timer_scheduled, true);
@@ -353,9 +366,6 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
             pause_play();
         }
     }
-
-    bool filter = false;
-    *p_mouse_out = *p_mouse_new;
 
     // prevent fullscreen from toggling on double click
     if (var_InheritBool(p_filter, DISABLE_FS_TOGGLE_CFG) && p_mouse_new->b_double_click) {
