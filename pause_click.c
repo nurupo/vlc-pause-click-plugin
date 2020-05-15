@@ -317,8 +317,6 @@ static void pause_play(void)
 
 static void timer_callback(void* data)
 {
-    UNUSED(data);
-
     if (!atomic_load(&timer_scheduled)) {
         return;
     }
