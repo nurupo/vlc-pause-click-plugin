@@ -340,9 +340,8 @@ static int cfg_get_mouse_button(vlc_object_t *p_obj, const char *cfg, int defaul
 
 static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mouse_old, const vlc_mouse_t *p_mouse_new)
 {
-    // we want to process only mouse presses and double clicks
-    if ((p_mouse_new->i_pressed == 0 && !p_mouse_new->b_double_click) ||
-            (p_mouse_new->i_pressed == p_mouse_old->i_pressed && p_mouse_new->b_double_click == p_mouse_old->b_double_click)) {
+    // we don't want to process anything if no mouse button was clicked
+    if (p_mouse_new->i_pressed == 0 && !p_mouse_new->b_double_click) {
         return VLC_EGENERIC;
     }
 
