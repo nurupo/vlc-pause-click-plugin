@@ -128,7 +128,8 @@ vlc_module_begin()
     set_section(N_("General"), NULL)
     add_integer(MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT,
                 N_("Pause/play mouse button"),
-                N_("Defines the mouse button that will pause/play the video."), false)
+                N_("Defines the mouse button that will pause/play the video. "
+                "Note that the scroll buttons might not work, that's a bug in VLC."), false)
     vlc_config_set(VLC_CONFIG_LIST, (size_t)(sizeof(mouse_button_values_index)/sizeof(int))-1,
                    mouse_button_values_index+1, mouse_button_names+1);
     add_bool(DISPLAY_ICON_CFG, DISPLAY_ICON_DEFAULT,
@@ -155,8 +156,7 @@ vlc_module_begin()
     set_section(N_("Mouse button assignment"), NULL)
     add_bool(DISABLE_FS_TOGGLE_CFG, DISABLE_FS_TOGGLE_DEFAULT,
              N_("Disable fullscreen toggle on double click"),
-             N_("The video will no longer fullscreen if you double click on it. "
-             "This option is unaffected by the double click interval option."), false)
+             N_("The video will no longer fullscreen if you double click on it."), false)
     add_integer(FS_TOGGLE_MOUSE_BUTTON_CFG, FS_TOGGLE_MOUSE_BUTTON_DEFAULT,
                 N_("Assign fullscreen toggle to"),
                 N_("Assigns fullscreen toggle to a mouse button."), false)
@@ -340,6 +340,7 @@ static int cfg_get_mouse_button(vlc_object_t *p_obj, const char *cfg, int defaul
 
 static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mouse_old, const vlc_mouse_t *p_mouse_new)
 {
+
     // we don't want to process anything if no mouse button was clicked
     if (p_mouse_new->i_pressed == 0 && !p_mouse_new->b_double_click) {
         return VLC_EGENERIC;
