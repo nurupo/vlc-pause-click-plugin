@@ -1,7 +1,7 @@
 /*****************************************************************************
  * pause_click.c : A filter that allows to pause/play a video by a mouse click
  *****************************************************************************
- * Copyright (C) 2014-2019 Maxim Biro
+ * Copyright (C) 2014-2020 Maxim Biro
  *
  * Authors: Maxim Biro <nurupo.contributions@gmail.com>
  *
