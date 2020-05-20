@@ -39,9 +39,9 @@ Download an appropriate archive:
 
 Version/Bitness | VLC 32 bit | VLC 64 bit
 ----------- | ------ | -------
-VLC 2.1 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-2.1-32bit-win.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-2.1-64bit-win.zip)
-VLC 2.2 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-2.2-32bit-win.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-2.2-64bit-win.zip)
-VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-3.0-32bit-win.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-3.0-64bit-win.zip)
+VLC 2.1 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-2.1-32bit-win.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-2.1-64bit-win.zip)
+VLC 2.2 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-2.2-32bit-win.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-2.2-64bit-win.zip)
+VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-3.0-32bit-win.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-3.0-64bit-win.zip)
 
 For the nightly VLC 4.0 [see the nightly builds](https://github.com/nurupo/vlc-pause-click-plugin-nightly-builds).
 
@@ -57,9 +57,9 @@ Download an appropriate archive:
 
 Version/Bitness | VLC 64 bit
 ----------- | -------
-VLC 2.1 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-2.1-macosx.zip)
-VLC 2.2 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-2.2-macosx.zip)
-VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.1.0/vlc-3.0-macosx.zip)
+VLC 2.1 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-2.1-macosx.zip)
+VLC 2.2 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-2.2-macosx.zip)
+VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-3.0-macosx.zip)
 
 For the nightly VLC 4.0 [see the nightly builds](https://github.com/nurupo/vlc-pause-click-plugin-nightly-builds).
 
