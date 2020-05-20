@@ -1,7 +1,8 @@
 # Pause Click plugin for VLC
 VLC plugin that allows you to pause/play a video by clicking on the video image.
 
-Works nicely with "double-click to fullscreen" too, if you enable ["Ignore double clicks" option in the settings](http://i.imgur.com/iDtLJpe.png).
+Can be configured to work nicely with double-click-to-fullscreen by enabling ["Prevent pause/play from triggering on double click" option in the settings](http://i.imgur.com/Kdrekks.png).
+By default it pauses on every click instead.
 
 ## Table of contents
 
@@ -99,7 +100,7 @@ There is a `vlc-pause-click-plugin` package [available](https://aur.archlinux.or
 2. Go into advanced preferences: Tools -> Preferences -> Show settings -> All [[screenshot]](http://i.imgur.com/QqORpID.png) [[screenshot]](http://i.imgur.com/RWLYX5g.png)
 3. Enable/Disable the plugin with a checkbox: (in advanced preferences) Interface -> Control Interfaces -> Pause/Play video on mouse click [[screenshot]](http://i.imgur.com/m9yF5Px.png)
 4. Enable/Disable the plugin with a checkbox: (in advanced preferences) Video -> Filters -> Pause/Play video on mouse click [[screenshot]](http://i.imgur.com/OZLqmI6.png)
-5. Change the plugin settings however you like: (in advanced preferences) Video -> Filters -> Pause click [[screenshot]](http://i.imgur.com/iDtLJpe.png)
+5. Change the plugin settings however you like: (in advanced preferences) Video -> Filters -> Pause click [[screenshot]](http://i.imgur.com/Kdrekks.png)
 6. Restart VLC for settings to take place [[screenshot]](http://i.imgur.com/G2QAK17.png)
 7. Play a video
 8. Click on video picture to pause/play the video
