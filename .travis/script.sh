@@ -61,8 +61,6 @@ elif [ "$TARGET" = "Windows" ]; then
   mkdir artifacts
   cp -a build/*.zip artifacts
 elif [ "$TARGET" = "macOS" ]; then
-  # versions was deleted so it fails the update
-  brew untap homebrew/versions
   # updating fails sometimes, unable to fetch data off homebrew GitHub repo, so keep retrying
   until brew update; do
     sleep 30
