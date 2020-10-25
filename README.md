@@ -82,6 +82,21 @@ Get required libraries and tools:
 sudo apt-get install build-essential pkg-config libvlccore-dev libvlc-dev
 ```
 
+Get the latest release of the plugin:
+```bash
+sudo apt-get install git
+git clone https://github.com/nurupo/vlc-pause-click-plugin
+cd vlc-pause-click-plugin
+git checkout \
+  "$(git tag --list | grep -P '^(\d+).(\d+).(\d+)$' | \
+    sed "s/\./ /g" | \
+    sort -snk3,3 | sort -snk2,2 | sort -snk1,1 | \
+    tail -n 1 | \
+    sed 's/ /\./g')"
+```
+
+(Or alternatively download [the latest release's tarball](https://github.com/nurupo/vlc-pause-click-plugin/releases/latest), extract it and cd into it)
+
 Build and install:
 ```bash
 make
