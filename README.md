@@ -45,7 +45,8 @@ VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/d
 
 For the nightly VLC 4.0 [see the nightly builds](https://github.com/nurupo/vlc-pause-click-plugin-nightly-builds).
 
-Extract the archive at `{VLC}\plugins\video_filter\`, where `{VLC}` is the directory the VLC was installed into, for example `C:\Program Files (x86)\VideoLAN\VLC\`.
+Extract the archive at `{VLC}\plugins\video_filter\`, where `{VLC}` is the directory the VLC was installed into.
+By default, the 32-bit VLC installs into `C:\Program Files (x86)\VideoLAN\VLC\` and the 64-bit one into `C:\Program Files\VideoLAN\VLC\`.
 
 Then follow [the usage instructions](#usage) below on how to enable the plugin.
 
