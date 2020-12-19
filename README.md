@@ -131,7 +131,7 @@ It's a very common mistake to skip one of those.
 - Make sure to restart VLC after you have put the plugin `.dll` (Windows) or `.so` (Linux) or `.dylib` (macOS) in the appropriate directory.
 - Make sure you have downloaded the appropriate version of the plugin for the VLC you are trying to use it with.
 Plugin's version and bitness should match the version and bitness of the VLC you are trying to use the plugin with.
-Plugin's bitness has nothing to do with the operation system bintess.
+Plugin's bitness has nothing to do with the operation system bitness.
 For example, if you use 32-bit VLC, it doesn't matter whether your Windows is 32-bit or 64-bit, you should use 32-bit version of the plugin, because it matches the bitness of the VLC you use.
 - Some users [have reported](https://github.com/nurupo/vlc-pause-click-plugin/issues/32#issue-296248669) that they had to run the VLC executable with `--reset-plugins-cache` flag once for the plugin to appear in the GUI.
 
