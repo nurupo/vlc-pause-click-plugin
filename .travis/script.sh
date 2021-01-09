@@ -61,6 +61,9 @@ elif [ "$TARGET" = "Windows" ]; then
   mkdir artifacts
   cp -a build/*.zip artifacts
 elif [ "$TARGET" = "macOS" ]; then
+  # fix https://github.com/Homebrew/brew/issues/9420
+  git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core fetch --unshallow
+  git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask fetch --unshallow
   # updating fails sometimes, unable to fetch data off homebrew GitHub repo, so keep retrying
   until brew update; do
     sleep 30
