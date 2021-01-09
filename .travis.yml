@@ -37,19 +37,19 @@ matrix:
     - os: osx
       env: TARGET=macOS   VLC_VERSION=2.1
       language: c
-      osx_image: xcode9.4
+      osx_image: xcode10.2
     - os: osx
       env: TARGET=macOS   VLC_VERSION=2.2
       language: c
-      osx_image: xcode9.4
+      osx_image: xcode10.2
     - os: osx
       env: TARGET=macOS   VLC_VERSION=3.0
       language: c
-      osx_image: xcode9.4
+      osx_image: xcode10.2
     - os: osx
       env: TARGET=macOS   VLC_VERSION=4.0
       language: c
-      osx_image: xcode9.4
+      osx_image: xcode10.2
       script:
         - .travis/script.sh
         - .travis/cirp/cleanup1.sh
