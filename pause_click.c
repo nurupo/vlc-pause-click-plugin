@@ -41,6 +41,7 @@
 #include <vlc_common.h>
 #include <vlc_filter.h>
 #include <vlc_input.h>
+#include <vlc_messages.h>
 #include <vlc_mouse.h>
 #if LIBVLC_VERSION_MAJOR >= 4
 # include <vlc_player.h>
@@ -293,6 +294,7 @@ static void pause_play(void)
     }
 
     if (is_in_menu()) {
+        msg_Dbg(p_intf, "in a menu, not pausing/playing");
         return;
     }
 
@@ -313,6 +315,8 @@ static void pause_play(void)
         display_icon(state == VLC_PLAYER_STATE_PLAYING ? OSD_PAUSE_ICON : OSD_PLAY_ICON);
     }
 #endif
+
+    msg_Dbg(p_intf, "pausing/playing");
 }
 
 static void timer_callback(void* data)
@@ -338,6 +342,12 @@ static int cfg_get_mouse_button(vlc_object_t *p_obj, const char *cfg, int defaul
     return mouse_button;
 }
 
+static void msg_dbg_mouse(vlc_object_t *p_obj, const vlc_mouse_t *p_mouse, const char *desc)
+{
+    msg_Dbg(p_obj, "%s: i_x=%d, i_y=%d, i_pressed=%d, b_double_click=%d",
+                   desc, p_mouse->i_x, p_mouse->i_y, p_mouse->i_pressed, p_mouse->b_double_click);
+}
+
 static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mouse_old, const vlc_mouse_t *p_mouse_new)
 {
 
@@ -346,8 +356,17 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
         return VLC_EGENERIC;
     }
 
+    // we don't want to process repeated events with different coordinates
+    if (p_mouse_new->i_pressed == p_mouse_old->i_pressed && p_mouse_new->b_double_click == p_mouse_old->b_double_click) {
+        return VLC_EGENERIC;
+    }
+
+    msg_dbg_mouse((vlc_object_t *)p_filter, p_mouse_old, "p_mouse_old");
+    msg_dbg_mouse((vlc_object_t *)p_filter, p_mouse_new, "p_mouse_new");
+
     // get mouse button from settings. updates if user changes the setting
     const int mouse_button = cfg_get_mouse_button((vlc_object_t *)p_filter, MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT);
+    msg_Dbg(p_filter, "mouse_button=%d", mouse_button);
 
     bool filter = false;
     *p_mouse_out = *p_mouse_new;
@@ -355,6 +374,7 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
     // manually control double click to fullscreen if directly requested or if the ignore double click option is set
     if ((var_InheritBool(p_filter, ENABLE_DOUBLE_CLICK_DELAY_CFG) || var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG)) &&
             mouse_button == MOUSE_BUTTON_LEFT) {
+        msg_Dbg(p_filter, "manually controlling double click");
         p_mouse_out->b_double_click = 0;
         filter = true;
     }
@@ -377,10 +397,12 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
                 // and set fullscreen
                 p_mouse_out->b_double_click = 1;
                 filter = true;
+                msg_Dbg(p_filter, "delayed click: a double click!");
             } else {
                 // it might be a single click -- schedule a timer
                 atomic_store(&timer_scheduled, true);
                 vlc_timer_schedule(timer, false, var_InheritInteger(p_filter, DOUBLE_CLICK_DELAY_CFG)*1000, 0);
+                msg_Dbg(p_filter, "delayed click: maybe a single click?");
             }
         }
     }
@@ -416,6 +438,8 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
         filter = true;
     }
 
+    msg_dbg_mouse((vlc_object_t *)p_filter, p_mouse_out, "p_mouse_out");
+
     return filter ? VLC_SUCCESS : VLC_EGENERIC;
 }
 
@@ -431,10 +455,13 @@ static int OpenFilter(vlc_object_t *p_this)
 {
     filter_t *p_filter = (filter_t *) p_this;
 
+    msg_Dbg(p_filter, "filter sub-plugin opened");
+
     p_filter->pf_video_filter = filter;
     p_filter->pf_video_mouse = mouse;
 
     if (vlc_timer_create(&timer, &timer_callback, p_filter)) {
+        msg_Err(p_filter, "failed to create a timer");
         return VLC_EGENERIC;
     }
     timer_initialized = true;
@@ -445,7 +472,9 @@ static int OpenFilter(vlc_object_t *p_this)
 
 static void CloseFilter(vlc_object_t *p_this)
 {
-    UNUSED(p_this);
+    filter_t *p_filter = (filter_t *) p_this;
+
+    msg_Dbg(p_filter, "filter sub-plugin closed");
 
     if (timer_initialized) {
         vlc_timer_destroy(timer);
@@ -458,12 +487,16 @@ static int OpenInterface(vlc_object_t *p_this)
 {
     p_intf = (intf_thread_t*) p_this;
 
+    msg_Dbg(p_intf, "interface sub-plugin opened");
+
     return VLC_SUCCESS;
 }
 
 static void CloseInterface(vlc_object_t *p_this)
 {
-    UNUSED(p_this);
+    p_intf = (intf_thread_t*) p_this;
+
+    msg_Dbg(p_intf, "interface sub-plugin closed");
 
     p_intf = NULL;
 }
