@@ -15,41 +15,22 @@ if: (branch != nightly && type != cron) || (branch == nightly && type == cron)
 matrix:
   include:
     - stage: Build
-      os: linux
-      env: TARGET=Linux   VLC_VERSION=2.1 DEBIAN=wheezy-backports
-    - os: linux
-      env: TARGET=Linux   VLC_VERSION=2.2 DEBIAN=jessie
-    - os: linux
-      env: TARGET=Linux   VLC_VERSION=3.0 DEBIAN=stretch
-    - os: linux
-      env: TARGET=Windows VLC_VERSION=2.1
-    - os: linux
-      env: TARGET=Windows VLC_VERSION=2.2
-    - os: linux
-      env: TARGET=Windows VLC_VERSION=3.0
-    - os: linux
-      env: TARGET=Windows VLC_VERSION=4.0
-      script:
-        - .travis/script.sh
-        - .travis/cirp/cleanup1.sh
-        - .travis/cirp/store.sh "$TRAVIS_BUILD_DIR/artifacts"
-        - .travis/cirp/cleanup2.sh
-    - os: osx
+      os: osx
       env: TARGET=macOS   VLC_VERSION=2.1
       language: c
-      osx_image: xcode9.4
+      osx_image: xcode10.2
     - os: osx
       env: TARGET=macOS   VLC_VERSION=2.2
       language: c
-      osx_image: xcode9.4
+      osx_image: xcode10.2
     - os: osx
       env: TARGET=macOS   VLC_VERSION=3.0
       language: c
-      osx_image: xcode9.4
+      osx_image: xcode10.2
     - os: osx
       env: TARGET=macOS   VLC_VERSION=4.0
       language: c
-      osx_image: xcode9.4
+      osx_image: xcode10.2
       script:
         - .travis/script.sh
         - .travis/cirp/cleanup1.sh
@@ -79,4 +60,6 @@ deploy:
   on:
     condition: $TARGET == macOS
     repo: nurupo/vlc-pause-click-plugin
-    tags: true
+    tags: false
+    all_branches: true
+    draft: true
