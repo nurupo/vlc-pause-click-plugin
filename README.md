@@ -115,6 +115,7 @@ There is [`vlc-pause-click-plugin` package](https://aur.archlinux.org/packages/v
  - `git clone https://github.com/nurupo/vlc-pause-click-plugin.git`
  - `cd vlc-pause-click-plugin`
  - `make`
+ - `cd`
  - `cp vlc-pause-click-plugin/libpause_click_plugin.so .local/share/flatpak/app/org.videolan.VLC/x86_64/stable//files/lib/vlc/plugins/control/`
 
 Note: The `e737adfbdb87e287835209fb7defc1ecfe71974adbfec6fadead7c5699e72a83` portion on this directory may be different. To find the correct directory use the following command `ls .local/share/flatpak/app/org.videolan.VLC/x86_64/stable/`. Copy the correct directroy into the above command. 
