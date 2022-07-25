@@ -111,6 +111,14 @@ If these build instructions don't work for you (perhaps you are using a non-Debi
 #### Arch Linux
 There is [`vlc-pause-click-plugin` package](https://aur.archlinux.org/packages/vlc-pause-click-plugin/) available in the AUR repository.
 
+#### Flatpak
+ - `git clone https://github.com/nurupo/vlc-pause-click-plugin.git`
+ - `cd vlc-pause-click-plugin`
+ - `make`
+ - `cp vlc-pause-click-plugin/libpause_click_plugin.so .local/share/flatpak/app/org.videolan.VLC/x86_64/stable//files/lib/vlc/plugins/control/`
+
+Note: The `e737adfbdb87e287835209fb7defc1ecfe71974adbfec6fadead7c5699e72a83` portion on this directory may be different. To find the correct directory use the following command `ls .local/share/flatpak/app/org.videolan.VLC/x86_64/stable/`. Copy the correct directroy into the above command. 
+
 ## Usage
 1. Restart VLC to load the newly added plugin [[screenshot]](http://i.imgur.com/G2QAK17.png)
 2. Go into advanced preferences: Tools -> Preferences -> Show settings -> All [[screenshot]](http://i.imgur.com/QqORpID.png) [[screenshot]](http://i.imgur.com/RWLYX5g.png)
