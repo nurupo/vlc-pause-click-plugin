@@ -145,27 +145,17 @@ If the issue persists, open an Issue in this repository and I will try to help.
 
 ### Green video image
 
-It has [been reported](https://github.com/nurupo/vlc-pause-click-plugin/issues/58) that in some configurations (Windows + d3d11 hardware-accelerated decoding + Nvidia graphics) the plugin causes the video image to turn green when playing certain video formats.
-
-There are several possible workarounds:
-
-
-- Disable hardware-accelerated decoding.
-
-  You can do so in: Tools -> Preferences -> (Simple) -> Input / Codecs -> Hardware-accelerated decoding
-- Enable filters with "D3D11" in their name: Tools -> Preferences -> (All) -> Video -> Filters
-
-  Note that this results in x2 GPU usage.
-- If you have Intel integrated graphics, you could try making VLC use that for its hardware-accelerated decoding.
+This bug has been fixed in the newest version of the plugin, so make sure your plugin is up-to-date.
+If you are still experiencing the bug on the newest version of the plugin, please [open an Issue](https://github.com/nurupo/vlc-pause-click-plugin/issues).
 
 ### It works for videos but not for audio-only files
 
 That's not a bug, that's the expected behavior due to how the plugin and VLC work.
 
-The plugin implements the "video filter" interface, which allows it to react on mouse clicks done on the video surface/image.
-When playing audio-only files, VLC doesn't show any video surface and thus doesn't load any of video filter plugins, so the plugin simply doesn't get loaded.
+To know when a user clicks their mouse, the plugin implements the video filter interface of VLC, which allows it to react on mouse clicks done on the video surface/image.
+When playing audio-only files, VLC doesn't create any video surface and thus doesn't load any of video filter plugins, so the plugin simply doesn't get loaded and can't react to mouse clicks.
 
-There is, however, a creative way to make the plugin work on audio-only files - enable an audio visualization via Audio -> Visualizations menu.
+There is, however, a creative way to make the plugin work on audio-only files -- enable an audio visualization via Audio -> Visualizations menu.
 Enabling an audio visualization will force VLC to create a video surface for the visualization and load the plugin.
 Now, if you click on the visualization, the audio should pause.
 All visualizations seem to work aside from the 3D spectrum one.

@@ -34,13 +34,14 @@
 
 #if LIBVLC_VERSION_MAJOR >= 3
 # define VLC_MODULE_LICENSE VLC_LICENSE_LGPL_2_1_PLUS
-# define VLC_MODULE_COPYRIGHT "Copyright (C) 2014-2020 Maxim Biro"
+# define VLC_MODULE_COPYRIGHT "Copyright (C) 2014-2022 Maxim Biro"
 #endif
 
 #include <vlc_atomic.h>
 #include <vlc_common.h>
 #include <vlc_filter.h>
 #include <vlc_input.h>
+#include <vlc_messages.h>
 #include <vlc_mouse.h>
 #if LIBVLC_VERSION_MAJOR >= 4
 # include <vlc_player.h>
@@ -51,9 +52,7 @@
 # include <vlc_spu.h>
 #endif
 #include <vlc_threads.h>
-#if LIBVLC_VERSION_MAJOR >= 3
-# include <vlc_vout.h>
-#endif
+#include <vlc_vout.h>
 #include <vlc_vout_osd.h>
 
 #if LIBVLC_VERSION_MAJOR == 2 && LIBVLC_VERSION_MINOR == 1
@@ -232,6 +231,64 @@ static bool is_in_menu(void) {
     vlc_player_Unlock(player);
     return false;
 #endif
+}
+
+static int is_interlaced() {
+    if (!p_intf) {
+        return -1;
+    }
+
+#if 2 <= LIBVLC_VERSION_MAJOR && LIBVLC_VERSION_MAJOR <= 3
+    playlist_t* p_playlist = pl_Get(p_intf);
+
+    input_thread_t* p_input = playlist_CurrentInput(p_playlist);
+    if (!p_input) {
+        return -1;
+    }
+
+    vout_thread_t** pp_vout;
+    size_t i_vout;
+    if (input_Control(p_input, INPUT_GET_VOUTS, &pp_vout, &i_vout) != VLC_SUCCESS) {
+        vlc_object_release(p_input);
+        return -1;
+    }
+
+    int found = 0;
+    for (size_t i = 0; i < i_vout; i ++) {
+        if (var_GetBool(pp_vout[i], "deinterlace-needed")) {
+            found = 1;
+        }
+        vlc_object_release((vlc_object_t *)pp_vout[i]);
+    }
+    vlc_object_release(p_input);
+    free(pp_vout);
+
+    return found;
+#elif LIBVLC_VERSION_MAJOR >= 4
+    vlc_player_t* player = vlc_playlist_GetPlayer(vlc_intf_GetMainPlaylist(p_intf));
+    vlc_player_Lock(player);
+
+    vout_thread_t** pp_vout;
+    size_t i_vout;
+    pp_vout = vlc_player_vout_HoldAll(player, &i_vout);
+    if (!pp_vout) {
+        vlc_player_Unlock(player);
+        return -1;
+    }
+    int found = 0;
+    for (size_t i = 0; i < i_vout; i ++) {
+        if (var_GetBool(pp_vout[i], "deinterlace-needed")) {
+            found = 1;
+        }
+        vout_Release(pp_vout[i]);
+    }
+    vlc_player_Unlock(player);
+    free(pp_vout);
+
+    return found;
+#endif
+
+    return -1;
 }
 
 static void display_icon(short icon) {
@@ -430,6 +487,22 @@ static picture_t *filter(filter_t *p_filter, picture_t *p_pic_in)
 static int OpenFilter(vlc_object_t *p_this)
 {
     filter_t *p_filter = (filter_t *) p_this;
+
+#if defined(_WIN32) && LIBVLC_VERSION_MAJOR == 3
+    // workaround for https://code.videolan.org/videolan/vlc/-/issues/25057
+    int interlaced = is_interlaced();
+    if (interlaced == 1 || interlaced == -1) {
+        switch(p_filter->fmt_in.video.i_chroma) {
+            case VLC_CODEC_D3D11_OPAQUE:
+            case VLC_CODEC_D3D11_OPAQUE_10B:
+                msg_Err(p_filter, "unsupported interlaced video input chroma (%4.4s)", (char*)&(p_filter->fmt_in.video.i_chroma));
+                msg_Err(p_filter, "interlaced videos are not supported on Windows due to bugs in VLC: "
+                                  "https://code.videolan.org/videolan/vlc/-/issues/25057#note_344915 "
+                                  "https://code.videolan.org/videolan/vlc/-/issues/27360");
+                return VLC_EGENERIC;
+        }
+    }
+#endif
 
     p_filter->pf_video_filter = filter;
     p_filter->pf_video_mouse = mouse;
