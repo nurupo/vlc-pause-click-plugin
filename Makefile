@@ -12,7 +12,7 @@ plugindir := $(shell pkg-config vlc-plugin --variable=pluginsdir)
 
 override CC += -std=gnu11
 override CPPFLAGS += -DPIC -I. -Isrc
-override CFLAGS += -fPIC
+override CFLAGS += -fPIC -fdiagnostics-color
 
 override CPPFLAGS += -DMODULE_STRING=\"pause_click\"
 override CFLAGS += $(VLC_PLUGIN_CFLAGS)
