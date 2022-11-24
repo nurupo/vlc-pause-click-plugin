@@ -8,7 +8,7 @@ build()
 
     if [[ "$VERSION" == "4.0" ]]
     then
-        LATEST_DIR_URL=$(lynx -listonly -nonumbers -dump "https://nightlies.videolan.org/build/win${BITS}/" | grep "vlc-$VERSION.0-" | LC_COLLATE=C sort --stable --ignore-case | tail -n1)
+        LATEST_DIR_URL=$(lynx -listonly -nonumbers -dump "https://artifacts.videolan.org/vlc/nightly-win${BITS}/" | grep -P '\d{8}-\d+' | LC_COLLATE=C sort --stable --ignore-case | tail -n1)
         echo "$LATEST_DIR_URL"
         LATEST_FILE_URL=$(lynx -listonly -nonumbers -dump "$LATEST_DIR_URL" | grep ".7z$" | grep -v "debug" | tail -n1)
         echo "$LATEST_FILE_URL"

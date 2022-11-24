@@ -1,7 +1,7 @@
 /*****************************************************************************
  * pause_click.c : A filter that allows to pause/play a video by a mouse click
  *****************************************************************************
- * Copyright (C) 2014-2020 Maxim Biro
+ * Copyright (C) 2014-2022 Maxim Biro
  *
  * Authors: Maxim Biro <nurupo.contributions@gmail.com>
  *
@@ -112,65 +112,86 @@ static vlc_timer_t timer;
 static bool timer_initialized = false;
 static atomic_bool timer_scheduled;
 
+// VLC 4.0 removed the advanced flag in 3716a7da5ba8dc30dbd752227c6a893c71a7495b
+#if LIBVLC_VERSION_MAJOR >= 4
+#define _add_bool(name, v, text, longtext, advc) \
+    add_bool(name, v, text, longtext)
+#define _add_integer(name, value, text, longtext, advc) \
+    add_integer(name, value, text, longtext)
+#define _add_integer_with_range(name, value, i_min, i_max, text, longtext, advc) \
+    add_integer_with_range(name, value, i_min, i_max, text, longtext)
+#else
+#define _add_bool add_bool
+#define _add_integer add_integer
+#define _add_integer_with_range add_integer_with_range
+#endif
 
 vlc_module_begin()
     set_description(N_("Pause/Play video on mouse click"))
     set_shortname(N_("Pause click"))
 #if LIBVLC_VERSION_MAJOR == 2
     set_capability("video filter2", 0)
-#elif LIBVLC_VERSION_MAJOR >= 3
+#elif LIBVLC_VERSION_MAJOR == 3
     set_capability("video filter", 0)
 #endif
+// VLC 4.0 removed categories and changed the way video filter callbacksare set
+// 6f68f894986e11e3f6215f6c2c25e5c0a3139429 94e23d51bb91cff1c14ef1079193920f04f48fd1
+#if LIBVLC_VERSION_MAJOR >= 4
+    set_callback_video_filter(OpenFilter)
+#else
     set_category(CAT_VIDEO)
-    set_subcategory(SUBCAT_VIDEO_VFILTER)
     set_callbacks(OpenFilter, CloseFilter)
+#endif
+    set_subcategory(SUBCAT_VIDEO_VFILTER)
     set_section(N_("General"), NULL)
-    add_integer(MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT,
-                N_("Pause/play mouse button"),
-                N_("Defines the mouse button that will pause/play the video. "
-                "Note that the scroll buttons might not work, that's a bug in VLC."), false)
+    _add_integer(MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT,
+                 N_("Pause/play mouse button"),
+                 N_("Defines the mouse button that will pause/play the video. "
+                 "Note that the scroll buttons might not work, that's a bug in VLC."), false)
     vlc_config_set(VLC_CONFIG_LIST, (size_t)(sizeof(mouse_button_values_index)/sizeof(int))-1,
                    mouse_button_values_index+1, mouse_button_names+1);
-    add_bool(DISPLAY_ICON_CFG, DISPLAY_ICON_DEFAULT,
-             N_("Show pause/play icon animations"),
-             N_("Overlay pause and play icons on the video when it's paused and "
-             "played respectively."), false)
+    _add_bool(DISPLAY_ICON_CFG, DISPLAY_ICON_DEFAULT,
+              N_("Show pause/play icon animations"),
+              N_("Overlay pause and play icons on the video when it's paused and "
+              "played respectively."), false)
     set_section(N_("Double click behavior"), NULL)
-    add_integer_with_range(DOUBLE_CLICK_DELAY_CFG, DOUBLE_CLICK_DELAY_DEFAULT,
-                           20, 5000, N_("Custom double click interval (milliseconds)"),
-                           N_("Two clicks made during this time interval will "
-                           "be treated as a double click."), false)
-    add_bool(ENABLE_DOUBLE_CLICK_DELAY_CFG, ENABLE_DOUBLE_CLICK_DELAY_DEFAULT,
-             N_("Enable the custom double click interval"),
-             N_("Ignore system's double click interval and use our own instead. "
-             "Useful when you want to make the time interval of double clicking "
-             "to fullscreen be longer or shorter."), false)
-    add_bool(IGNORE_DOUBLE_CLICK_CFG, IGNORE_DOUBLE_CLICK_DEFAULT,
-             N_("Prevent pause/play from triggering on double click*"),
-             N_("Useful if you don't want the video to pause/play when double "
-             "clicking to fullscreen. Note that enabling this will delay "
-             "pause/play action by the double click interval, so the experience "
-             "might not be as snappy as with this option disabled."
-             "\n\n*Forces the use of the custom double click interval."), false)
+    _add_integer_with_range(DOUBLE_CLICK_DELAY_CFG, DOUBLE_CLICK_DELAY_DEFAULT,
+                            20, 5000, N_("Custom double click interval (milliseconds)"),
+                            N_("Two clicks made during this time interval will "
+                            "be treated as a double click."), false)
+    _add_bool(ENABLE_DOUBLE_CLICK_DELAY_CFG, ENABLE_DOUBLE_CLICK_DELAY_DEFAULT,
+              N_("Enable the custom double click interval"),
+              N_("Ignore system's double click interval and use our own instead. "
+              "Useful when you want to make the time interval of double clicking "
+              "to fullscreen be longer or shorter."), false)
+    _add_bool(IGNORE_DOUBLE_CLICK_CFG, IGNORE_DOUBLE_CLICK_DEFAULT,
+              N_("Prevent pause/play from triggering on double click*"),
+              N_("Useful if you don't want the video to pause/play when double "
+              "clicking to fullscreen. Note that enabling this will delay "
+              "pause/play action by the double click interval, so the experience "
+              "might not be as snappy as with this option disabled."
+              "\n\n*Forces the use of the custom double click interval."), false)
     set_section(N_("Mouse button assignment"), NULL)
-    add_bool(DISABLE_FS_TOGGLE_CFG, DISABLE_FS_TOGGLE_DEFAULT,
-             N_("Disable fullscreen toggle on double click"),
-             N_("The video will no longer fullscreen if you double click on it."), false)
-    add_integer(FS_TOGGLE_MOUSE_BUTTON_CFG, FS_TOGGLE_MOUSE_BUTTON_DEFAULT,
-                N_("Assign fullscreen toggle to"),
-                N_("Assigns fullscreen toggle to a mouse button."), false)
+    _add_bool(DISABLE_FS_TOGGLE_CFG, DISABLE_FS_TOGGLE_DEFAULT,
+              N_("Disable fullscreen toggle on double click"),
+              N_("The video will no longer fullscreen if you double click on it."), false)
+    _add_integer(FS_TOGGLE_MOUSE_BUTTON_CFG, FS_TOGGLE_MOUSE_BUTTON_DEFAULT,
+                 N_("Assign fullscreen toggle to"),
+                 N_("Assigns fullscreen toggle to a mouse button."), false)
     change_integer_list(mouse_button_values_index, mouse_button_names)
-    add_bool(DISABLE_CONTEXT_MENU_TOGGLE_CFG, DISABLE_CONTEXT_MENU_TOGGLE_DEFAULT,
-             N_("Disable context menu toggle on right click"),
-             N_("The context menu will no longer pop up if you right click on the video. "
-             "Useful if you want to pause/play or full screen on right click."), false)
-    add_integer(CONTEXT_MENU_TOGGLE_MOUSE_BUTTON_CFG, CONTEXT_MENU_TOGGLE_MOUSE_BUTTON_DEFAULT,
-                N_("Assign context menu toggle to"),
-                N_("Assigns context menu toggle to a mouse button."), false)
+    _add_bool(DISABLE_CONTEXT_MENU_TOGGLE_CFG, DISABLE_CONTEXT_MENU_TOGGLE_DEFAULT,
+              N_("Disable context menu toggle on right click"),
+              N_("The context menu will no longer pop up if you right click on the video. "
+              "Useful if you want to pause/play or full screen on right click."), false)
+    _add_integer(CONTEXT_MENU_TOGGLE_MOUSE_BUTTON_CFG, CONTEXT_MENU_TOGGLE_MOUSE_BUTTON_DEFAULT,
+                 N_("Assign context menu toggle to"),
+                 N_("Assigns context menu toggle to a mouse button."), false)
     change_integer_list(mouse_button_values_index, mouse_button_names)
         add_submodule()
         set_capability("interface", 0)
+#if LIBVLC_VERSION_MAJOR <= 3
         set_category(CAT_INTERFACE)
+#endif
         set_subcategory(SUBCAT_INTERFACE_CONTROL)
         set_callbacks(OpenInterface, CloseInterface)
 vlc_module_end()
@@ -397,7 +418,6 @@ static int cfg_get_mouse_button(vlc_object_t *p_obj, const char *cfg, int defaul
 
 static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mouse_old, const vlc_mouse_t *p_mouse_new)
 {
-
     // we don't want to process anything if no mouse button was clicked
     if (p_mouse_new->i_pressed == 0 && !p_mouse_new->b_double_click) {
         return VLC_EGENERIC;
@@ -417,9 +437,12 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
     }
 
     // react only on the configured mouse button click
-    if (vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, mouse_button) ||
+    if (vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, mouse_button)
+#if LIBVLC_VERSION_MAJOR <= 3
             // treat the double click as the left mouse button click
-            (p_mouse_new->b_double_click && mouse_button == MOUSE_BUTTON_LEFT)) {
+            || (p_mouse_new->b_double_click && mouse_button == MOUSE_BUTTON_LEFT)
+#endif
+            ) {
         // pause/play on every click unless told not to
         if (!var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG)) {
             pause_play();
@@ -452,6 +475,9 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
     const int fs_mouse_button = cfg_get_mouse_button((vlc_object_t *)p_filter, FS_TOGGLE_MOUSE_BUTTON_CFG,
                                                      FS_TOGGLE_MOUSE_BUTTON_DEFAULT);
     if (fs_mouse_button != -1 && vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, fs_mouse_button)) {
+#if LIBVLC_VERSION_MAJOR >= 4
+        vlc_mouse_SetPressed(p_mouse_out, MOUSE_BUTTON_LEFT);
+#endif
         p_mouse_out->b_double_click = 1;
         filter = true;
     }
@@ -484,12 +510,33 @@ static picture_t *filter(filter_t *p_filter, picture_t *p_pic_in)
     return p_pic_in;
 }
 
+#if LIBVLC_VERSION_MAJOR >= 4
+// VLC 4.0 changed mouse callback's signature, so we adapt it to the VLC2/VLC3
+// callback in order to use the same function for all versions
+static int _mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_new_out, const vlc_mouse_t *p_mouse_old)
+{
+    vlc_mouse_t p_mouse_new = *p_mouse_new_out;
+    return mouse(p_filter, p_mouse_new_out, p_mouse_old, &p_mouse_new);
+}
+
+static const struct vlc_filter_operations filter_ops =
+{
+    .filter_video = filter,
+    .video_mouse = _mouse,
+    .close = CloseFilter,
+};
+#endif
+
 static int OpenFilter(vlc_object_t *p_this)
 {
     filter_t *p_filter = (filter_t *) p_this;
 
+#if LIBVLC_VERSION_MAJOR >= 4
+    p_filter->ops = &filter_ops;
+#else
     p_filter->pf_video_filter = filter;
     p_filter->pf_video_mouse = mouse;
+#endif
 
     if (vlc_timer_create(&timer, &timer_callback, p_filter)) {
         return VLC_EGENERIC;
