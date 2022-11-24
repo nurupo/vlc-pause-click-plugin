@@ -145,8 +145,27 @@ If the issue persists, open an Issue in this repository and I will try to help.
 
 ### Green video image
 
-This bug has been fixed in the newest version of the plugin, so make sure your plugin is up-to-date.
-If you are still experiencing the bug on the newest version of the plugin, please [open an Issue](https://github.com/nurupo/vlc-pause-click-plugin/issues).
+When playing interlaced videos in VLC 3.0 on Windows using Direct3D11 hardware-accelerated decoding, the first interlaced video will play fine, but the following ones will play showing a green video image (while still correctly playing the sound).
+
+This is a known bug in VLC 3.0 and it has to be fixed in VLC, it's not something that can be fixed in our plugin. The upcoming VLC 4.0 has this bug fixed, however it's unlikely that the fix will be back-ported to VLC 3.0.
+
+[You can see this issue report for more information.](https://github.com/nurupo/vlc-pause-click-plugin/issues/58)
+
+There are several possible workarounds:
+
+- Enable "Direct3D11 deinterlace filter" in: Tools -> Preferences -> (All) -> Video -> Filters
+
+  Note that this results in x2 GPU usage due to additional video format conversions this option makes.
+
+- Disable hardware-accelerated decoding.
+
+  You can do so in: Tools -> Preferences -> (Simple) -> Input / Codecs -> Hardware-accelerated decoding
+
+  Note that this results in higher CPU usage, since the video is now decoded in software using the CPU.
+
+- Restart VLC every time you want to play a second interlaced video in a VLC session.
+
+- If you have Intel integrated graphics, you could try making VLC use that for its hardware-accelerated decoding.
 
 ### It works for videos but not for audio-only files
 

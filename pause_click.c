@@ -488,22 +488,6 @@ static int OpenFilter(vlc_object_t *p_this)
 {
     filter_t *p_filter = (filter_t *) p_this;
 
-#if defined(_WIN32) && LIBVLC_VERSION_MAJOR == 3
-    // workaround for https://code.videolan.org/videolan/vlc/-/issues/25057
-    int interlaced = is_interlaced();
-    if (interlaced == 1 || interlaced == -1) {
-        switch(p_filter->fmt_in.video.i_chroma) {
-            case VLC_CODEC_D3D11_OPAQUE:
-            case VLC_CODEC_D3D11_OPAQUE_10B:
-                msg_Err(p_filter, "unsupported interlaced video input chroma (%4.4s)", (char*)&(p_filter->fmt_in.video.i_chroma));
-                msg_Err(p_filter, "interlaced videos are not supported on Windows due to bugs in VLC: "
-                                  "https://code.videolan.org/videolan/vlc/-/issues/25057#note_344915 "
-                                  "https://code.videolan.org/videolan/vlc/-/issues/27360");
-                return VLC_EGENERIC;
-        }
-    }
-#endif
-
     p_filter->pf_video_filter = filter;
     p_filter->pf_video_mouse = mouse;
 
