@@ -431,9 +431,11 @@ static int cfg_get_mouse_button(vlc_object_t *p_obj, const char *cfg, int defaul
 
 static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t *p_mouse_old, const vlc_mouse_t *p_mouse_new)
 {
+    *p_mouse_out = *p_mouse_new;
+
     // we don't want to process anything if no mouse button was clicked
     if (p_mouse_new->i_pressed == 0 && !p_mouse_new->b_double_click) {
-        return VLC_EGENERIC;
+        return VLC_SUCCESS;
     }
 
 #define MSG "old: i_pressed=%d, b_double_click=%d; " \
@@ -455,15 +457,11 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
     const int mouse_button = cfg_get_mouse_button((vlc_object_t *)p_filter, MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT);
     msg_Dbg(p_filter, "mouse_button=%d", mouse_button);
 
-    bool filter = false;
-    *p_mouse_out = *p_mouse_new;
-
     // manually control double click to fullscreen if directly requested or if the ignore double click option is set
     if ((var_InheritBool(p_filter, ENABLE_DOUBLE_CLICK_DELAY_CFG) || var_InheritBool(p_filter, IGNORE_DOUBLE_CLICK_CFG)) &&
             mouse_button == MOUSE_BUTTON_LEFT) {
         msg_Dbg(p_filter, "manually controlling double click");
         p_mouse_out->b_double_click = 0;
-        filter = true;
     }
 
     // react only on the configured mouse button click
@@ -486,7 +484,6 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
                 vlc_timer_schedule(timer, false, 0, 0);
                 // and set fullscreen
                 p_mouse_out->b_double_click = 1;
-                filter = true;
                 msg_Dbg(p_filter, "delayed click: a double click! cancelling the timer");
             } else {
                 // it might be a single click -- schedule a timer
@@ -501,7 +498,6 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
     // prevent fullscreen from toggling on double click
     if (var_InheritBool(p_filter, DISABLE_FS_TOGGLE_CFG) && p_mouse_new->b_double_click) {
         p_mouse_out->b_double_click = 0;
-        filter = true;
     }
 
     // toggle fullscreen on specified mouse click
@@ -512,14 +508,12 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
         vlc_mouse_SetPressed(p_mouse_out, MOUSE_BUTTON_LEFT);
 #endif
         p_mouse_out->b_double_click = 1;
-        filter = true;
     }
 
     // prevent the context menu from toggling on right click
     if (var_InheritBool(p_filter, DISABLE_CONTEXT_MENU_TOGGLE_CFG) &&
             vlc_mouse_IsPressed(p_mouse_new, MOUSE_BUTTON_RIGHT)) {
         p_mouse_out->i_pressed = 0;
-        filter = true;
     }
 
     // toggle context menu on specified mouse click
@@ -529,14 +523,10 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
     if (context_menu_mouse_button != -1 &&
             vlc_mouse_HasPressed(p_mouse_old, p_mouse_new, context_menu_mouse_button)) {
         vlc_mouse_SetPressed(p_mouse_out, MOUSE_BUTTON_RIGHT);
-        filter = true;
-    }
-
-    if (!filter) {
-        return VLC_EGENERIC;
     }
 
     msg_Dbg(p_filter, "out: i_pressed=%d, b_double_click=%d", p_mouse_out->i_pressed, p_mouse_out->b_double_click);
+
     return VLC_SUCCESS;
 }
 
