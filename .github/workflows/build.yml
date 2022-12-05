@@ -1,0 +1,42 @@
+name: build
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches: [master]
+    paths-ignore:
+      - '**.md'
+
+concurrency:
+  group: build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        target-os: [linux, windows, macos]
+        vlc-version: ["2.1", "2.2", "3.0", "4.0"]
+        exclude:
+          # VLC 4.0 is not currently packaged by any distro
+          - target-os: linux
+            vlc-version: "4.0"
+        include:
+          - target-os: linux
+            runs-on: ubuntu-latest
+          - target-os: windows
+            runs-on: ubuntu-latest
+          - target-os: macos
+            runs-on: macos-latest
+    runs-on: ${{ matrix.runs-on }}
+    name: ${{ matrix.target-os }} - VLC ${{ matrix.vlc-version }}
+    steps:
+      - uses: actions/checkout@v3
+      - run: ci/build.sh ${{ matrix.target-os }} ${{ matrix.vlc-version }}
+      - if: matrix.target-os == 'macos'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.target-os }} - VLC ${{ matrix.vlc-version }}
+          path: artifacts/*.zip
