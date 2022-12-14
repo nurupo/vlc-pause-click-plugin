@@ -5,12 +5,12 @@ set -euxo pipefail
 TARGET_OS="$1"
 VLC_VERSION="$2"
 
-echo_nightly_readme() {
+NIGHTLY_README="$(
   echo "This plugin was built for a nightly, in-development version of VLC." \
-       "The development version of VLC often breaks ABI, making the plugin built for it non-functional in newer VLC builds." \
-       "Meaning that a plugin targeting a nightly VLC built today might not work with a nightly VLC built tomorrow." \
-       "Thus it's recommended that you use the specific nightly VLC build this plugin was made for: $1" | fold -sw 80
-}
+       "The development version of VLC often breaks ABI compatibility, meaning that a plugin targeting a nightly VLC built today might not work with a nightly VLC built tomorrow." \
+       "Thus it's recommended that you use the specific nightly VLC build this plugin was made for:" | \
+  fold -sw 80
+)"
 
 if [ "$TARGET_OS" = "linux" ]; then
   case $VLC_VERSION in
@@ -77,8 +77,10 @@ elif [ "$TARGET_OS" = "windows" ]; then
   [ "$(find ./build -name "*.dll" | wc -l)" = "2" ] || false
   cd build
   if [ "$VLC_VERSION" = "4.0" ]; then
-    echo_nightly_readme "$(cat $VLC_VERSION/32/VLC_DOWNLOAD_URL.txt)" > "$VLC_VERSION/32/README.txt"
-    echo_nightly_readme "$(cat $VLC_VERSION/64/VLC_DOWNLOAD_URL.txt)" > "$VLC_VERSION/64/README.txt"
+    echo "$NIGHTLY_README" > "$VLC_VERSION/32/README.txt"
+    echo "$(cat $VLC_VERSION/32/VLC_DOWNLOAD_URL.txt)" > "$VLC_VERSION/32/README.txt"
+    echo "$NIGHTLY_README" > "$VLC_VERSION/64/README.txt"
+    echo "$(cat $VLC_VERSION/32/VLC_DOWNLOAD_URL.txt)" > "$VLC_VERSION/64/README.txt"
   fi
   ./zip-it.sh
   cd ..
@@ -89,74 +91,131 @@ elif [ "$TARGET_OS" = "macos" ]; then
   until brew update; do
     sleep 30
   done
-  mkdir -p tmp/tmp
-  cd tmp/tmp
   if [ "$VLC_VERSION" = "4.0" ]; then
     brew install lynx
-    LATEST_MACOS_DIR_URL=$(lynx -listonly -nonumbers -dump "https://artifacts.videolan.org/vlc/nightly-macos-x86_64/" | grep -E '[0-9]{8}-[0-9]+' | LC_COLLATE=C sort --stable --ignore-case | tail -n1)
-    echo "$LATEST_MACOS_DIR_URL"
-    LATEST_MACOS_FILE_URL=$(lynx -listonly -nonumbers -dump "$LATEST_MACOS_DIR_URL" | grep ".dmg$" | tail -n1)
-    echo "$LATEST_MACOS_FILE_URL"
-    if [ "$(echo "$LATEST_MACOS_FILE_URL" | wc -l | awk '{print $1}')" != "1" ]; then
-      echo "Error: Weren't able to find the .dmg file for VLC $VLC_VERSION"
-      exit 1
-    fi
-    wget "$LATEST_MACOS_FILE_URL"
-    7z x "*.dmg" "*/VLC.app/Contents/Frameworks" || true
-    mkdir ../lib
-    mv ./*/VLC.app/Contents/Frameworks/*.dylib ../lib
-    cd ..
-    rm -rf ./tmp
-    LATEST_WIN64_DIR_URL=$(lynx -listonly -nonumbers -dump "https://artifacts.videolan.org/vlc/nightly-win64/" | grep -E '[0-9]{8}-[0-9]+' | LC_COLLATE=C sort --stable --ignore-case | tail -n1)
-    echo "$LATEST_WIN64_DIR_URL"
-    LATEST_WIN64_FILE_URL=$(lynx -listonly -nonumbers -dump "$LATEST_WIN64_DIR_URL" | grep ".7z$" | grep -v "debug" | tail -n1)
-    echo "$LATEST_WIN64_FILE_URL"
-    if [ "$(echo "$LATEST_WIN64_FILE_URL" | wc -l | awk '{print $1}')" != "1" ]; then
-      echo "Error: Weren't able to find the .7z file for VLC $VLC_VERSION"
-      exit 1
-    fi
-    wget "$LATEST_WIN64_FILE_URL" -O vlc-$VLC_VERSION.0-win64.7z
+
+    build() {
+      ARCH="$1"
+      URL="$2"
+      CC="$3"
+
+      mkdir -p "sdk/$ARCH"
+      cd "sdk/$ARCH"
+
+      LATEST_MACOS_DIR_URL=$(lynx -listonly -nonumbers -dump "$URL" | grep -E '[0-9]{8}-[0-9]+' | LC_COLLATE=C sort --stable --ignore-case | tail -n1)
+      echo "$LATEST_MACOS_DIR_URL"
+      LATEST_MACOS_SDK_URL=$(lynx -listonly -nonumbers -dump "$LATEST_MACOS_DIR_URL" | grep ".tar.gz$" | tail -n1)
+      echo "$LATEST_MACOS_SDK_URL"
+      if [ "$(echo "$LATEST_MACOS_SDK_URL" | wc -l | awk '{print $1}')" != "1" ]; then
+        echo "Error: Weren't able to find the .tar.gz SDK file for VLC $VLC_VERSION"
+        exit 1
+      fi
+      wget "$LATEST_MACOS_SDK_URL"
+      tar xvf ./*.tar.gz
+      rm ./*.tar.gz
+
+      # fix paths in .pc files
+      sed -i "" "s|^prefix=.*|prefix=$PWD|g" lib/pkgconfig/*.pc
+      export PKG_CONFIG_PATH="${PWD}/lib/pkgconfig"
+      cd ../..
+      make OS=macOS CC="$CC"
+      echo "$LATEST_MACOS_DIR_URL" > VLC_DOWNLOAD_URL.txt
+      mv libpause_click_plugin.dylib VLC_DOWNLOAD_URL.txt "sdk/$ARCH"
+      make clean
+    }
+    build "intel64" "https://artifacts.videolan.org/vlc/nightly-macos-x86_64/" "cc"
+    build "arm64"   "https://artifacts.videolan.org/vlc/nightly-macos-arm64/"  "cc -target arm64-apple-macos10.11"
+    lipo "sdk/intel64/libpause_click_plugin.dylib" "sdk/arm64/libpause_click_plugin.dylib" -create -output libpause_click_plugin.dylib
+    echo "$NIGHTLY_README" > README.txt
+    echo "intel64: $(cat "sdk/intel64/VLC_DOWNLOAD_URL.txt")" >> README.txt
+    echo "arm64: $(cat "sdk/arm64/VLC_DOWNLOAD_URL.txt")" >> README.txt
+    #mv intel64/VLC_DOWNLOAD_URL.txt VLC_DOWNLOAD_URL_INTEL64.txt
+    #mv arm64/VLC_DOWNLOAD_URL.txt VLC_DOWNLOAD_URL_ARM64.txt
+    mkdir artifacts
+    zip -j artifacts/vlc-$VLC_VERSION-macosx-universal.zip libpause_click_plugin.dylib README.txt
+  elif [ "$VLC_VERSION" = "3.0" ]; then
+    # in contrast to Windows VLC including a very nice and complete sdk directory,
+    # macOS VLC doesn't package .pc files, plugin headers and, in 2.1.0, libvlc_version.h is not generated off libvlc_version.h.in.
+    # it just packages libvlc.dylib, libvlccore.dylib and libvlc headers.
+    # we grab the missing pieces from the Windows VLC, there shouldn't be anything platform-specific in those so it should work
+    mkdir windows-sdk
+    cd windows-sdk
+    wget "https://download.videolan.org/pub/videolan/vlc/$VLC_VERSION.0/win64/vlc-$VLC_VERSION.0-win64.7z" -O vlc-$VLC_VERSION.0-win64.7z
     7z x "*.7z" -o* "*/sdk"
-    mkdir -p include
-    mv vlc-$VLC_VERSION.0-win64/*/sdk/include/vlc include
+    mkdir -p include/vlc lib
+    mv vlc-$VLC_VERSION.0-win64/*/sdk/include/vlc/libvlc_version.h include/vlc/
+    mv vlc-$VLC_VERSION.0-win64/*/sdk/include/vlc/plugins include/vlc
     mv vlc-$VLC_VERSION.0-win64/*/sdk/lib/pkgconfig lib
     rm -rf ./vlc-$VLC_VERSION.0-win64*
+    cd ..
+
+    build() {
+      ARCH="$1"
+      URL="$2"
+      CC="$3"
+
+      mkdir -p "sdk/$ARCH"
+      cd "sdk/$ARCH"
+
+      mkdir tmp
+      cd tmp
+      wget "$URL"
+      # extracting contents of a .dmg file using 7-zip is more of a hack, and while it works 7z exits with an error code we want to suppress
+      7z x "*.dmg" "*/VLC.app/Contents/MacOS" || true
+      mv ./*/VLC.app/Contents/MacOS/lib ..
+      mv ./*/VLC.app/Contents/MacOS/include ..
+      cd ..
+      rm -rf ./tmp
+      cp -a ../../windows-sdk/* .
+
+      # fix paths in .pc files
+      sed -i "" "s|^prefix=.*|prefix=$PWD|g" lib/pkgconfig/*.pc
+      export PKG_CONFIG_PATH="${PWD}/lib/pkgconfig"
+      # fix library symlink
+      cd lib
+      ln -sf libvlccore.*.dylib libvlccore.dylib
+      cd ..
+      cd ../..
+      make OS=macOS CC="$CC"
+      mv libpause_click_plugin.dylib "sdk/$ARCH"
+      make clean
+    }
+    build "intel64" "https://download.videolan.org/pub/videolan/vlc/$VLC_VERSION.0/macosx/vlc-$VLC_VERSION.0.dmg" "cc"
+    # VLC 3.0.13 is the first universal macOS VLC version
+    build "arm64"   "https://download.videolan.org/pub/videolan/vlc/3.0.13/macosx/vlc-3.0.13-universal.dmg"       "cc -target arm64-apple-macos10.11"
+    lipo "sdk/intel64/libpause_click_plugin.dylib" "sdk/arm64/libpause_click_plugin.dylib" -create -output libpause_click_plugin.dylib
+    mkdir artifacts
+    zip -j artifacts/vlc-$VLC_VERSION-macosx-universal.zip libpause_click_plugin.dylib
   else
+    # 2.* versions are intel64-only
+    mkdir -p sdk/intel64/tmp
+    cd sdk/intel64/tmp
     wget "https://download.videolan.org/pub/videolan/vlc/$VLC_VERSION.0/macosx/vlc-$VLC_VERSION.0.dmg"
-    # extracting contents of a .dmg file using 7-zip is more of a hack, and while it works 7z exits with an error code we want to suppress
     7z x "*.dmg" "*/VLC.app/Contents/MacOS" || true
     mv ./*/VLC.app/Contents/MacOS/lib ..
     mv ./*/VLC.app/Contents/MacOS/include ..
     cd ..
     rm -rf ./tmp
-    # in contrast to Windows VLC including a very nice and complete sdk directory,
-    # macOS VLC doesn't package .pc files, plugin headers and in 2.1.0 libvlc_version.h is not generated off libvlc_version.h.in.
-    # it just packages libvlc.dylib, libvlccore.dylib and libvlc headers.
-    # we grab the missing pieces from the Windows VLC, there shouldn't be anything platform-specific in those so it should work
+
     wget "https://download.videolan.org/pub/videolan/vlc/$VLC_VERSION.0/win64/vlc-$VLC_VERSION.0-win64.7z" -O vlc-$VLC_VERSION.0-win64.7z
     7z x "*.7z" -o* "*/sdk"
     mv vlc-$VLC_VERSION.0-win64/*/sdk/include/vlc/libvlc_version.h include/vlc/
     mv vlc-$VLC_VERSION.0-win64/*/sdk/include/vlc/plugins include/vlc
     mv vlc-$VLC_VERSION.0-win64/*/sdk/lib/pkgconfig lib
     rm -rf ./vlc-$VLC_VERSION.0-win64*
+
+    # fix paths in .pc files
+    sed -i "" "s|^prefix=.*|prefix=$PWD|g" lib/pkgconfig/*.pc
+    export PKG_CONFIG_PATH="${PWD}/lib/pkgconfig"
+    cd lib
+    ln -sf libvlccore.*.dylib libvlccore.dylib
+    cd ..
+    cd ../..
+    make OS=macOS
+
+    mkdir artifacts
+    zip -j artifacts/vlc-$VLC_VERSION-macosx-intel64.zip libpause_click_plugin.dylib
   fi
-  # fix paths in .pc files
-  sed -i "" "s|^prefix=.*|prefix=$PWD|g" lib/pkgconfig/*.pc
-  export PKG_CONFIG_PATH="${PWD}/lib/pkgconfig"
-  cd lib
-  # fix library symlink
-  ln -sf libvlccore.*.dylib libvlccore.dylib
-  cd ../..
-  make OS=macOS
-  if [ "$VLC_VERSION" = "4.0" ]; then
-    echo "$LATEST_MACOS_DIR_URL" > VLC_DOWNLOAD_URL.txt
-    echo_nightly_readme "$(cat VLC_DOWNLOAD_URL.txt)" > "README.txt"
-    zip -j vlc-$VLC_VERSION-macosx.zip libpause_click_plugin.dylib VLC_DOWNLOAD_URL.txt README.txt
-  else
-    zip -j vlc-$VLC_VERSION-macosx.zip libpause_click_plugin.dylib
-  fi
-  mkdir artifacts
-  cp -a vlc-$VLC_VERSION-macosx.zip artifacts
 fi
 
 exit 0
