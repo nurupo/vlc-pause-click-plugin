@@ -11,8 +11,10 @@ By default it pauses on every click instead.
   - [Windows](#windows)
   - [macOS](#macos)
   - [Linux](#linux)
+    - [Flatpak](#flatpak)
     - [Debian](#debian)
     - [Arch Linux](#arch-linux)
+    - [Snap](#snap)
 - [Usage](#usage)
 - [Troubleshooting](#troubleshooting)
 - [License](#license)
@@ -72,10 +74,21 @@ If you want to build the plugin binary yourself, take a look at the [build instr
 
 ### Linux
 
-Note that Snap versions of VLC are not supported.
-Not supported in a sense that I haven't figured out how to build the plugin such that it would be ABI compatible with the Snap VLC and how to make the Snap VLC load the plugin.
-If someone could figure that out and contribute their findings - that would be very helpful.
-[This Snap VLC discussion](https://github.com/nurupo/vlc-pause-click-plugin/issues/33) might be useful.
+#### Flatpak
+The plugin is available on Flathub as `org.videolan.VLC.Plugin.pause_click` ([source](https://github.com/flathub/org.videolan.VLC.Plugin.pause_click)).
+
+Assuming you have Flathub repo added, you can install the plugin using:
+
+```bash
+flatpak install flathub org.videolan.VLC.Plugin.pause_click
+```
+
+Once installed, follow [the usage instructions](#usage) below on how to enable the plugin.
+
+Note that updating Flatpak VLC might remove the plugin and you will need to re-install the plugin again.
+
+Specifically, due to how VLC plugins are published (by using run-time specific branches) (https://github.com/flathub/flathub/pull/3843#issuecomment-1401719795) and due to Flatpak being unable to automatically update plugins that are published in such a way (https://github.com/flatpak/flatpak/issues/4208), every time VLC updates its runtime, thus changing the required runtime version its plugins must use, the already installed plugins will stop working as they use an older runtime and don't satisfy that requirement, and the versions of plugins that use the new runtime that VLC now requires must be manually installed instead.
+Not every VLC update will cause this, only the ones that change the required plugin runtime, which typically happen once a year or so.
 
 #### Debian
 Get required libraries and tools:
@@ -110,6 +123,14 @@ If these build instructions don't work for you (perhaps you are using a non-Debi
 
 #### Arch Linux
 There is [`vlc-pause-click-plugin` package](https://aur.archlinux.org/packages/vlc-pause-click-plugin/) available in the AUR repository.
+
+Once installed, follow [the usage instructions](#usage) below on how to enable the plugin.
+
+#### Snap
+Snap VLC is not supported.
+Not supported in the sense that I haven't figured out how to build the plugin such that it would be ABI compatible with the Snap VLC and how to make the Snap VLC load the plugin.
+If someone could figure that out and contribute their findings - that would be very helpful.
+[This Snap VLC discussion](https://github.com/nurupo/vlc-pause-click-plugin/issues/33) might be useful.
 
 ## Usage
 1. Restart VLC to load the newly added plugin [[screenshot]](http://i.imgur.com/G2QAK17.png)
