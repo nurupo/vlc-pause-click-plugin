@@ -1,0 +1,53 @@
+#include <windows.h>
+#include <vlc/libvlc_version.h>
+#include "version.h"
+
+// libvlc_version.h has version numbers in parentheses, this is a hack to remove them
+#define PXSTR(s) STR s
+
+#if defined(__x86_64__)
+    #define BITNESS "64-bit"
+#elif defined(__i386__)
+    #define BITNESS "32-bit"
+#else
+    #error "Can't determine bitness"
+#endif
+
+#define TARGET_VLC "VLC " PXSTR(LIBVLC_VERSION_MAJOR) "." PXSTR(LIBVLC_VERSION_MINOR) " " BITNESS
+
+// https://learn.microsoft.com/en-us/windows/win32/menurc/versioninfo-resource
+1 VERSIONINFO
+#if VERSION_IS_RELEASE
+    FILEVERSION    VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, 0
+    PRODUCTVERSION VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, 0
+#else
+    FILEVERSION    VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, -1
+    PRODUCTVERSION VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, -1
+    FILEFLAGSMASK  VS_FFI_FILEFLAGSMASK
+    FILEFLAGS      (VS_FF_PRERELEASE)
+#endif
+    FILEOS   VOS__WINDOWS32
+    FILETYPE VFT_DLL
+{
+    BLOCK "StringFileInfo"
+    {
+        // U.S. English, 7-bit ASCII
+        BLOCK "04090000"
+        {
+            VALUE "CompanyName",      VERSION_AUTHOR
+            VALUE "FileDescription",  "A VLC plugin that allows to pause/play a video by clicking on the video image. "
+                                      "(Built for " TARGET_VLC ".)"
+            VALUE "FileVersion",      VERSION_STRING
+            VALUE "InternalName",     "vlc-pause-click-plugin"
+            VALUE "LegalCopyright",   VERSION_COPYRIGHT
+            VALUE "OriginalFilename", "libpause_click_plugin.dll"
+            VALUE "ProductName",      "vlc-pause-click-plugin"
+            VALUE "ProductVersion",   VERSION_STRING ", for " TARGET_VLC
+        }
+    }
+
+    BLOCK "VarFileInfo"
+    {
+        VALUE "Translation", 0x0409, 0x0000
+    }
+}

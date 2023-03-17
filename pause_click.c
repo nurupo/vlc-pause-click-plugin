@@ -1,7 +1,7 @@
 /*****************************************************************************
- * pause_click.c : A filter that allows to pause/play a video by a mouse click
+ * pause_click.c : A plugin that allows to pause/play a video by a mouse click
  *****************************************************************************
- * Copyright (C) 2014-2022 Maxim Biro
+ * Copyright (C) 2014-2023 Maxim Biro
  *
  * Authors: Maxim Biro <nurupo.contributions@gmail.com>
  *
@@ -32,10 +32,11 @@
 #endif
 
 #include <vlc/libvlc_version.h>
+#include "version.h"
 
 #if LIBVLC_VERSION_MAJOR >= 3
 # define VLC_MODULE_LICENSE VLC_LICENSE_LGPL_2_1_PLUS
-# define VLC_MODULE_COPYRIGHT "Copyright (C) 2014-2022 Maxim Biro"
+# define VLC_MODULE_COPYRIGHT VERSION_COPYRIGHT
 #endif
 
 #include <vlc_atomic.h>
@@ -63,7 +64,7 @@
 #elif LIBVLC_VERSION_MAJOR >= 3 && LIBVLC_VERSION_MINOR >= 0
 # include <vlc_interface.h>
 #else
-# error "VLC version " LIBVLC_VERSION_MAJOR "." LIBVLC_VERSION_MINOR " is too old and won't be supported"
+# error "VLC version < 2.1 is not supported"
 #endif
 
 #define UNUSED(x) (void)(x)
@@ -144,6 +145,18 @@ vlc_module_begin()
     set_callbacks(OpenFilter, CloseFilter)
 #endif
     set_subcategory(SUBCAT_VIDEO_VFILTER)
+    set_help(N_("<style>"
+                "p { margin:0.5em 0 0.5em 0; }"
+                "</style>"
+                "<p>"
+                "v" VERSION_STRING "<br>"
+                "Copyright " VERSION_COPYRIGHT
+                "</p><p>"
+                "Homepage: <a href=\"" VERSION_HOMEPAGE "\">" VERSION_HOMEPAGE "</a><br>"
+                "Donate: <a href=\"https://www.paypal.com/donate?hosted_button_id=9HJHAH5UDL3GL\">PayPal</a>, "
+                        "<a href=\"https://github.com/sponsors/nurupo\">GitHub Sponsors</a>, "
+                        "<a href=\"bitcoin:34qxFsZjs1ZWVBwer11gXiycpv7QHTA8q3?label=nurupo&message=Donation+for+vlc-pause-click-plugin\">Bitcoin</a>"
+                "</p>"))
     set_section(N_("General"), NULL)
     _add_integer(MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT,
                  N_("Pause/play mouse button"),
@@ -555,10 +568,17 @@ static const struct vlc_filter_operations filter_ops =
 };
 #endif
 
+static void print_version(vlc_object_t *p_obj)
+{
+    msg_Dbg(p_obj, "v" VERSION_STRING ", " VERSION_COPYRIGHT ", " VERSION_LICENSE);
+    msg_Dbg(p_obj, VERSION_HOMEPAGE);
+}
+
 static int OpenFilter(vlc_object_t *p_this)
 {
     filter_t *p_filter = (filter_t *) p_this;
 
+    print_version(p_this);
     msg_Dbg(p_filter, "filter sub-plugin opened");
     if (!p_intf) {
         msg_Err(p_filter, "interface sub-plugin is not initialized. "
@@ -571,7 +591,7 @@ static int OpenFilter(vlc_object_t *p_this)
     video_format_Print(p_this, "pause_click FORMAT OUT:", &p_filter->fmt_out.video);
     msg_Dbg(p_filter, "b_allow_fmt_out_change=%d", p_filter->b_allow_fmt_out_change);
     int interlaced = is_interlaced();
-    msg_Dbg(p_filter, "is_interlaced() = %d", interlaced);
+    msg_Dbg(p_filter, "is_interlaced()=%d", interlaced);
 
     if (p_filter->fmt_out.video.i_chroma != p_filter->fmt_in.video.i_chroma) {
         msg_Err(p_filter, "this filter doesn't do video conversion");
@@ -610,6 +630,7 @@ static int OpenInterface(vlc_object_t *p_this)
 {
     p_intf = (intf_thread_t*) p_this;
 
+    print_version(p_this);
     msg_Dbg(p_intf, "interface sub-plugin opened");
 
     return VLC_SUCCESS;

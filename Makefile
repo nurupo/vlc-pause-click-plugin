@@ -22,6 +22,7 @@ ifeq ($(OS),Linux)
   EXT := so
 else ifeq ($(OS),Windows)
   EXT := dll
+  RES := version.rc.o
 else ifeq ($(OS),macOS)
   EXT := dylib
 else
@@ -43,15 +44,20 @@ uninstall:
 	rm -f $(DESTDIR)$(plugindir)/video_filter/libpause_click_plugin.$(EXT)
 
 clean:
-	rm -f -- libpause_click_plugin.$(EXT) pause_click.o
+	rm -f -- libpause_click_plugin.$(EXT) *.o
 
 mostlyclean: clean
 
 SOURCES = pause_click.c
 
-$(SOURCES:%.c=%.o): %: pause_click.c
+$(SOURCES:%.c=%.o): %: pause_click.c version.h
 
-libpause_click_plugin.$(EXT): $(SOURCES:%.c=%.o)
+%.rc.o: %.rc
+	$(RC) -o $@ $< $(VLC_PLUGIN_CFLAGS)
+
+%.rc:
+
+libpause_click_plugin.$(EXT): $(SOURCES:%.c=%.o) $(RES)
 	$(CC) -shared -o $@ $^ $(LDFLAGS)
 
 .PHONY: all install install-strip uninstall clean mostlyclean
