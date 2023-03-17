@@ -204,4 +204,4 @@ All visualizations seem to work aside from the 3D spectrum one.
 If you are on Linux, depending on how VLC is packaged in your distribution, you might need to install an additional package to enable audio visualizations, despite them already being listed in the GUI (e.g. `vlc-plugin-visualization` package in Debian).
 
 ## License
-LGPLv2.1+
+LGPL-2.1-or-later
