@@ -38,6 +38,7 @@ build()
     fi
 
     cd /repo
+    make clean OS=Windows
     make CC=$TOOLCHAIN-gcc LD=$TOOLCHAIN-ld RC=$TOOLCHAIN-windres OS=Windows
     $TOOLCHAIN-strip libpause_click_plugin.dll
 
