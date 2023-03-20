@@ -4,10 +4,12 @@ on:
   push:
     paths-ignore:
       - '**.md'
+      - 'packaging/org.videolan.VLC.Plugin.pause_click.appdata.xml'
   pull_request:
     branches: [master]
     paths-ignore:
       - '**.md'
+      - 'packaging/org.videolan.VLC.Plugin.pause_click.appdata.xml'
 
 concurrency:
   group: build-${{ github.event.pull_request.number || github.ref }}
