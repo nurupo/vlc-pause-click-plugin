@@ -34,7 +34,7 @@ jobs:
     name: ${{ matrix.target-os }} - VLC ${{ matrix.vlc-version }}
     steps:
       - uses: actions/checkout@v3
-      - run: ci/build.sh ${{ matrix.target-os }} ${{ matrix.vlc-version }}
+      - run: .github/ci-scripts/build.sh ${{ matrix.target-os }} ${{ matrix.vlc-version }}
       - if: matrix.target-os == 'macos'
         uses: actions/upload-artifact@v3
         with:

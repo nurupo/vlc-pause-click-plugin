@@ -24,7 +24,7 @@
 
 #include <windows.h>
 #include <vlc/libvlc_version.h>
-#include "version.h"
+#include "src/version.h"
 
 // libvlc_version.h has version numbers in parentheses, this is a hack to remove them
 #define PXSTR(s) STR s

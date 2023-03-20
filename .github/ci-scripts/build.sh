@@ -69,7 +69,8 @@ elif [ "$TARGET_OS" = "windows" ]; then
   sudo apt-get install -y tree zip
   # use our own docker image for testing building of Windows binaries
   # has the benefit of making sure that our docker image is not broken
-  sudo docker build -t vlc-pause-click-plugin-windows-build docker
+  sudo docker build -t vlc-pause-click-plugin-windows-build packaging/windows/docker
+  mkdir build
   sudo docker run --rm -v "${PWD}":/repo -v "${PWD}"/build:/build vlc-pause-click-plugin-windows-build $VLC_VERSION 32
   sudo docker run --rm -v "${PWD}":/repo -v "${PWD}"/build:/build vlc-pause-click-plugin-windows-build $VLC_VERSION 64
   tree build -s --si --du
@@ -82,7 +83,7 @@ elif [ "$TARGET_OS" = "windows" ]; then
     echo "$NIGHTLY_README" > "$VLC_VERSION/64/README.txt"
     echo "$(cat $VLC_VERSION/32/VLC_DOWNLOAD_URL.txt)" > "$VLC_VERSION/64/README.txt"
   fi
-  ./zip-it.sh
+  ../packaging/windows/zip.sh
   cd ..
   mkdir artifacts
   cp -a build/*.zip artifacts
