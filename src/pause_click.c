@@ -138,8 +138,9 @@ vlc_module_begin()
 #elif LIBVLC_VERSION_MAJOR == 3
     set_capability("video filter", 0)
 #endif
-// VLC 4.0 removed categories and changed the way video filter callbacksare set
-// 6f68f894986e11e3f6215f6c2c25e5c0a3139429 94e23d51bb91cff1c14ef1079193920f04f48fd1
+// VLC 4.0 removed categories and changed the way video filter callbacks are set
+// 6f68f894986e11e3f6215f6c2c25e5c0a3139429
+// 94e23d51bb91cff1c14ef1079193920f04f48fd1
 #if LIBVLC_VERSION_MAJOR >= 4
     set_callback_video_filter(OpenFilter)
 #else
