@@ -271,7 +271,7 @@ static bool is_in_menu(void) {
 #endif
 }
 
-static int is_interlaced() {
+static int is_interlaced(void) {
     if (!p_intf) {
         return -1;
     }
