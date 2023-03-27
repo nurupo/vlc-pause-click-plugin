@@ -42,7 +42,7 @@ if [ "$TARGET_OS" = "linux" ]; then
     "jessie")
       RUN bash -c 'echo "
                    deb http://archive.debian.org/debian jessie main
-                   deb http://security.debian.org jessie/updates main
+                   deb http://archive.debian.org/debian-security jessie/updates main
                    " > /etc/apt/sources.list'
       APT_OPTIONS="--force-yes"
       ;;
