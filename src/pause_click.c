@@ -449,7 +449,7 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
 {
     *p_mouse_out = *p_mouse_new;
 
-    // we don't want to process anything if no mouse button was clicked
+    // we don't want to process anything if no mouse button is pressed
     if (p_mouse_new->i_pressed == 0 && !p_mouse_new->b_double_click) {
         return VLC_SUCCESS;
     }
@@ -460,12 +460,16 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
             p_mouse_new->i_pressed, p_mouse_new->b_double_click
     if (p_mouse_new->b_double_click) {
         msg_Dbg(p_filter, "DOUBLE CLICK " MSG);
-    } else if (p_mouse_old->i_pressed == 0 && p_mouse_new->i_pressed != 0) {
+    } else if (p_mouse_old->i_pressed < p_mouse_new->i_pressed) {
         msg_Dbg(p_filter, "PRESSED " MSG);
-    } else if (p_mouse_old->i_pressed != 0 && p_mouse_new->i_pressed == 0) {
+    } else if (p_mouse_old->i_pressed > p_mouse_new->i_pressed) {
         msg_Dbg(p_filter, "RELEASED " MSG);
-    } else {
-        msg_Dbg(p_filter, "UNKNOWN " MSG);
+    } else if (p_mouse_old->i_pressed == p_mouse_new->i_pressed) {
+        if (p_mouse_old->i_pressed != 0) {
+            msg_Dbg(p_filter, "DRAGGED " MSG);
+        } else {
+            msg_Dbg(p_filter, "MOVED " MSG);
+        }
     }
 #undef MSG
 
