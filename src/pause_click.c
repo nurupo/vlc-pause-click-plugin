@@ -172,15 +172,15 @@ vlc_module_begin()
               N_("Overlay pause and play icons on the video when it's paused and "
               "played respectively."), false)
     set_section(N_("Double click behavior"), NULL)
-    _add_integer_with_range(DOUBLE_CLICK_DELAY_CFG, DOUBLE_CLICK_DELAY_DEFAULT,
-                            20, 5000, N_("Custom double click interval (milliseconds)"),
-                            N_("Two clicks made during this time interval will "
-                            "be treated as a double click."), false)
     _add_bool(ENABLE_DOUBLE_CLICK_DELAY_CFG, ENABLE_DOUBLE_CLICK_DELAY_DEFAULT,
               N_("Enable the custom double click interval"),
               N_("Ignore system's double click interval and use our own instead. "
               "Useful when you want to make the time interval of double clicking "
               "to fullscreen be longer or shorter."), false)
+    _add_integer_with_range(DOUBLE_CLICK_DELAY_CFG, DOUBLE_CLICK_DELAY_DEFAULT,
+                            20, 5000, N_("Custom double click interval (milliseconds)"),
+                            N_("Two clicks made during this time interval will "
+                            "be treated as a double click."), false)
     _add_bool(IGNORE_DOUBLE_CLICK_CFG, IGNORE_DOUBLE_CLICK_DEFAULT,
               N_("Prevent pause/play from triggering on double click*"),
               N_("Useful if you don't want the video to pause/play when double "
@@ -191,7 +191,7 @@ vlc_module_begin()
     set_section(N_("Mouse button assignment"), NULL)
     _add_bool(DISABLE_FS_TOGGLE_CFG, DISABLE_FS_TOGGLE_DEFAULT,
               N_("Disable fullscreen toggle on double click"),
-              N_("The video will no longer fullscreen if you double click on it."), false)
+              N_("The video will no longer fullscreen when you double click on it."), false)
     _add_integer(FS_TOGGLE_MOUSE_BUTTON_CFG, FS_TOGGLE_MOUSE_BUTTON_DEFAULT,
                  N_("Assign fullscreen toggle to"),
                  N_("Assigns fullscreen toggle to a mouse button."), false)
