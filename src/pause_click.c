@@ -118,16 +118,28 @@ static atomic_bool timer_scheduled;
 
 // VLC 4.0 removed the advanced flag in 3716a7da5ba8dc30dbd752227c6a893c71a7495b
 #if LIBVLC_VERSION_MAJOR >= 4
-#define _add_bool(name, v, text, longtext, advc) \
+# define _add_bool(name, v, text, longtext, advc) \
     add_bool(name, v, text, longtext)
-#define _add_integer(name, value, text, longtext, advc) \
+# define _add_integer(name, value, text, longtext, advc) \
     add_integer(name, value, text, longtext)
-#define _add_integer_with_range(name, value, i_min, i_max, text, longtext, advc) \
+# define _add_integer_with_range(name, value, i_min, i_max, text, longtext, advc) \
     add_integer_with_range(name, value, i_min, i_max, text, longtext)
 #else
 #define _add_bool add_bool
 #define _add_integer add_integer
 #define _add_integer_with_range add_integer_with_range
+#endif
+
+// VLC 4.0 made set_help() render as a plain text, introducing set_html_help()
+// for HTML
+// faf8b85ac3e55bc95cfd80f914e8537c47d2c1a5
+// caf143311e00acf24533b498890df2e57a7a80e2
+#if LIBVLC_VERSION_MAJOR >= 4
+# define _set_help(str) \
+    set_help_html(str)
+#else
+# define _set_help(str) \
+    set_help(str)
 #endif
 
 vlc_module_begin()
@@ -148,18 +160,18 @@ vlc_module_begin()
     set_callbacks(OpenFilter, CloseFilter)
 #endif
     set_subcategory(SUBCAT_VIDEO_VFILTER)
-    set_help(N_("<style>"
-                "p { margin:0.5em 0 0.5em 0; }"
-                "</style>"
-                "<p>"
-                "v" VERSION_STRING "<br>"
-                "Copyright " VERSION_COPYRIGHT
-                "</p><p>"
-                "Homepage: <a href=\"" VERSION_HOMEPAGE "\">" VERSION_HOMEPAGE "</a><br>"
-                "Donate: <a href=\"https://www.paypal.com/donate?hosted_button_id=9HJHAH5UDL3GL\">PayPal</a>, "
-                        "<a href=\"https://github.com/sponsors/nurupo\">GitHub Sponsors</a>, "
-                        "<a href=\"bitcoin:34qxFsZjs1ZWVBwer11gXiycpv7QHTA8q3?label=nurupo&message=Donation+for+vlc-pause-click-plugin\">Bitcoin</a>"
-                "</p>"))
+    _set_help(N_("<style>"
+                 "p { margin:0.5em 0 0.5em 0; }"
+                 "</style>"
+                 "<p>"
+                 "v" VERSION_STRING "<br>"
+                 "Copyright " VERSION_COPYRIGHT
+                 "</p><p>"
+                 "Homepage: <a href=\"" VERSION_HOMEPAGE "\">" VERSION_HOMEPAGE "</a><br>"
+                 "Donate: <a href=\"https://www.paypal.com/donate?hosted_button_id=9HJHAH5UDL3GL\">PayPal</a>, "
+                         "<a href=\"https://github.com/sponsors/nurupo\">GitHub Sponsors</a>, "
+                         "<a href=\"bitcoin:34qxFsZjs1ZWVBwer11gXiycpv7QHTA8q3?label=nurupo&message=Donation+for+vlc-pause-click-plugin\">Bitcoin</a>"
+                 "</p>"))
     set_section(N_("General"), NULL)
     _add_integer(MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT,
                  N_("Pause/play mouse button"),
