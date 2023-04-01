@@ -125,9 +125,9 @@ static atomic_bool timer_scheduled;
 # define _add_integer_with_range(name, value, i_min, i_max, text, longtext, advc) \
     add_integer_with_range(name, value, i_min, i_max, text, longtext)
 #else
-#define _add_bool add_bool
-#define _add_integer add_integer
-#define _add_integer_with_range add_integer_with_range
+# define _add_bool add_bool
+# define _add_integer add_integer
+# define _add_integer_with_range add_integer_with_range
 #endif
 
 // VLC 4.0 made set_help() render as a plain text, introducing set_html_help()
