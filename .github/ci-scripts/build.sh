@@ -16,7 +16,7 @@ if [ "$TARGET_OS" = "linux" ]; then
   case $VLC_VERSION in
     "2.1") DEBIAN_VERSION="wheezy-backports" ;;
     "2.2") DEBIAN_VERSION="jessie" ;;
-    "3.0") DEBIAN_VERSION="bullseye" ;;
+    "3.0") DEBIAN_VERSION="bookworm" ;;
     *) echo "Error: we don't support building VLC $VLC_VERSION on Linux" && exit 1 ;;
   esac
 
