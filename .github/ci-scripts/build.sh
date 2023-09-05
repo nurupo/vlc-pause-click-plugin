@@ -14,15 +14,16 @@ NIGHTLY_README="$(
 
 if [ "$TARGET_OS" = "linux" ]; then
   case $VLC_VERSION in
-    "2.1") DEBIAN_VERSION="wheezy-backports" ;;
-    "2.2") DEBIAN_VERSION="jessie" ;;
-    "3.0") DEBIAN_VERSION="bookworm" ;;
+    "2.1") DOCKER_DEBIAN_VERSION="wheezy-backports" ;;
+    "2.2") DOCKER_DEBIAN_VERSION="jessie-slim" ;;
+    "3.0") DOCKER_DEBIAN_VERSION="bookworm-slim" ;;
     *) echo "Error: we don't support building VLC $VLC_VERSION on Linux" && exit 1 ;;
   esac
+  DEBIAN_VERSION="${DOCKER_DEBIAN_VERSION/%-slim/}"
 
   # start a docker container of a specific version of Debian
   # different Debian versions have different VLC versions packaged
-  sudo docker run -it -d --name ci -v "${PWD}":/repo debian:$DEBIAN_VERSION /bin/bash
+  sudo docker run -it -d --name ci -v "${PWD}":/repo debian:$DOCKER_DEBIAN_VERSION /bin/bash
 
   # runs a command in the started continer
   RUN() {
