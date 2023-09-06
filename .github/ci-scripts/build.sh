@@ -120,6 +120,7 @@ elif [ "$TARGET_OS" = "macos" ]; then
       sed -i "" "s|^prefix=.*|prefix=$PWD|g" lib/pkgconfig/*.pc
       export PKG_CONFIG_PATH="${PWD}/lib/pkgconfig"
       cd ../..
+      echo -e "#include <time.h>\n$(cat sdk/$ARCH/include/vlc/plugins/vlc_atomic.h)" > sdk/$ARCH/include/vlc/plugins/vlc_atomic.h
       make OS=macOS CC="$CC"
       echo "$LATEST_MACOS_DIR_URL" > VLC_DOWNLOAD_URL.txt
       mv libpause_click_plugin.dylib VLC_DOWNLOAD_URL.txt "sdk/$ARCH"
