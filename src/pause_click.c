@@ -528,7 +528,8 @@ static int mouse(filter_t *p_filter, vlc_mouse_t *p_mouse_out, const vlc_mouse_t
     }
 
     // prevent fullscreen from toggling on double click
-    if (var_InheritBool(p_filter, DISABLE_FS_TOGGLE_CFG) && p_mouse_new->b_double_click) {
+    if (var_InheritBool(p_filter, DISABLE_FS_TOGGLE_CFG) &&
+            (p_mouse_new->b_double_click || p_mouse_out->b_double_click)) {
         p_mouse_out->b_double_click = 0;
     }
 
