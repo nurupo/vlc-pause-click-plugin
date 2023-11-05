@@ -77,10 +77,11 @@ If you want to build the plugin binary yourself, take a look at the [build instr
 ### Linux
 
 #### Flatpak
-The plugin is available on Flathub as `org.videolan.VLC.Plugin.pause_click` ([source](https://github.com/flathub/org.videolan.VLC.Plugin.pause_click)).
+This plugin [is available on Flathub as `org.videolan.VLC.Plugin.pause_click`](https://flathub.org/apps/org.videolan.VLC.Plugin.pause_click).
+(The manifest file is available in [flathub/org.videolan.VLC.Plugin.pause_click](https://github.com/flathub/org.videolan.VLC.Plugin.pause_click) repository -- just note that it defaults to an outdated branch.)
 
+If you use Flathub VLC, you can add the plugin to your VLC by installing `org.videolan.VLC.Plugin.pause_click`.
 Assuming you have Flathub repo added, you can install the plugin using:
-
 ```bash
 flatpak install flathub org.videolan.VLC.Plugin.pause_click
 ```
