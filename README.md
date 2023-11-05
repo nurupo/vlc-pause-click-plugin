@@ -86,12 +86,60 @@ Assuming you have Flathub repo added, you can install the plugin using:
 flatpak install flathub org.videolan.VLC.Plugin.pause_click
 ```
 
+The above command will ask you which branch of the plugin extension you wish to install.
+**You must select the correct branch for your version of Flathub VLC or the plugin will not be available in the VLC.**
+Unfortunately, flatpak doesn't indicate in the `flatpak install` output which extension branches work with the already installed apps.
+To find the correct plugin extension branch for your version of VLC, you can check the `versions=` field under `[Extension org.videolan.VLC.Plugin]` in the output of `flatpak info --show-metadata org.videolan.VLC`.
+The following automates this process for you, installing the correct plugin extension branch for your version of VLC:
+```bash
+ARCH="$(flatpak info --show-metadata org.videolan.VLC \
+      | sed -En '
+          /^\[Application\]/ {
+              :label
+              /^runtime=/ {
+                  # Leave just the arch
+                  s|[^/]*/||
+                  s|/[^/]*||
+                  p
+                  q
+              }
+              n
+              /^[^\[]/b label
+              q
+          }'
+)"
+BRANCH="$(flatpak info --show-metadata org.videolan.VLC \
+      | sed -En '
+          /^\[Extension org.videolan.VLC.Plugin\]/ {
+              :label
+              /^versions=/ {
+                  # Use the second version in the list. This assumes a specific
+                  # "versions=" format and might break if it changes.
+                  s/[^;]*;//
+                  p
+                  q
+              }
+              n
+              /^[^\[]/b label
+              q
+          }'
+)"
+flatpak install "runtime/org.videolan.VLC.Plugin.pause_click/$ARCH/$BRANCH"
+```
+
+If the correct plugin extension branch is installed, you should see `Extension: runtime/org.videolan.VLC.Plugin.pause_click/$ARCH/$BRANCH` listed in the output of:
+
+```bash
+flatpak info flatpak info --show-extensions org.videolan.VLC
+```
+
+If you do not have the correct plugin extension branch installed, there will be no `Extension: runtime/org.videolan.VLC.Plugin.pause_click` listed in there.
+
 Once installed, follow [the usage instructions](#usage) below on how to enable the plugin.
 
-Note that updating Flatpak VLC might remove the plugin and you will need to re-install the plugin again.
-
-Specifically, due to how VLC plugins are published (by using run-time specific branches) (https://github.com/flathub/flathub/pull/3843#issuecomment-1401719795) and due to Flatpak being unable to automatically update plugins that are published in such a way (https://github.com/flatpak/flatpak/issues/4208), every time VLC updates its runtime, thus changing the required runtime version its plugins must use, the already installed plugins will stop working as they use an older runtime and don't satisfy that requirement, and the versions of plugins that use the new runtime that VLC now requires must be manually installed instead.
-Not every VLC update will cause this, only the ones that change the required plugin runtime, which typically happen once a year or so.
+Also, note that updating Flathub VLC might remove the plugin and you will need to re-install the plugin again.
+Specifically, due to how VLC plugins are published (by using run-time specific branches https://github.com/flathub/flathub/pull/3843#issuecomment-1401719795) and due to Flatpak being unable to automatically update plugins that are published in such a way (https://github.com/flatpak/flatpak/issues/4208), every time VLC updates its runtime, thus changing the required runtime version its plugins must use, the already installed plugins will stop working as they use an older runtime and don't satisfy that requirement, and the versions of plugins that use the new runtime that VLC now requires must be manually installed instead.
+Not every VLC update will cause this, only the ones that change the required plugin runtime, which typically happens only once a year or so.
 
 #### Debian
 Get required libraries and tools:
