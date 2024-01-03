@@ -60,15 +60,17 @@ If you want to build the plugin binary yourself, take a look at the [build instr
 
 Download an appropriate archive:
 
-Version/Bitness | VLC 64 bit
------------ | -------
-VLC 2.1 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-2.1-macosx.zip)
-VLC 2.2 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-2.2-macosx.zip)
-VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-3.0-macosx.zip)
+Version | VLC 64 bit | Universal (works on both x86_64 and arm64)
+----- | ----- | -----
+VLC 2.1 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-2.1-macosx.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/files/10227403/vlc-2.1-macosx-intel64.zip)
+VLC 2.2 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-2.2-macosx.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/files/10227402/vlc-2.2-macosx-intel64.zip)
+VLC 3.0 | [Download](https://github.com/nurupo/vlc-pause-click-plugin/releases/download/2.2.0/vlc-3.0-macosx.zip) | [Download](https://github.com/nurupo/vlc-pause-click-plugin/files/10227401/vlc-3.0-macosx-universal.zip)
 
 For the nightly VLC 4.0 [see the nightly builds](https://github.com/nurupo/vlc-pause-click-plugin-nightly-builds).
 
-Extract the archive at `/Applications/VLC.app/Contents/MacOS/plugins/`
+Ensure that VLC opens without any errors or security prompts.
+
+Extract the archive into `/Applications/VLC.app/Contents/MacOS/plugins/`.
 
 Then follow [the usage instructions](#usage) below on how to enable the plugin.
 
