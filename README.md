@@ -1,4 +1,9 @@
 # Pause Click plugin for VLC
+
+[![GitHub total number of all asset downloads from all releases](https://img.shields.io/github/downloads/nurupo/vlc-pause-click-plugin/total?style=flat&logo=github&label=Total%20downloads&labelColor=f48b00&color=f0f3f4)](https://github.com/nurupo/vlc-pause-click-plugin/releases)
+[![GitHub total number of all asset downloads from the latest release only](https://img.shields.io/github/downloads/nurupo/vlc-pause-click-plugin/latest/total?style=flat&logo=github&label=Latest%20version%20downloads&labelColor=f48b00&color=f0f3f4)](https://github.com/nurupo/vlc-pause-click-plugin/releases/latest)
+[![Flathub total number of the extension installs](https://img.shields.io/flathub/downloads/org.videolan.VLC.Plugin.pause_click?style=flat&logo=flathub&label=Flathub%20installs&labelColor=f48b00&color=f0f3f4)](https://flathub.org/apps/org.videolan.VLC.Plugin.pause_click)
+
 VLC plugin that allows you to pause/play a video by clicking on the video image.
 
 By default it pauses on every click, but it can be configured to work nicely with double-click-to-fullscreen by enabling ["Prevent pause/play from triggering on double click" option in the settings](http://i.imgur.com/Kdrekks.png).
