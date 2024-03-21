@@ -20,6 +20,7 @@ Specifically, it allows disabling fullscreen toggle on double click and context 
   - [Linux](#linux)
     - [Flatpak](#flatpak)
     - [Debian](#debian)
+    - [Fedora](#fedora)
     - [Arch Linux](#arch-linux)
     - [Snap](#snap)
 - [Usage](#usage)
@@ -147,7 +148,7 @@ Specifically, due to how VLC plugins are published (by using run-time specific b
 Not every VLC update will cause this, only the ones that change the required plugin runtime, which typically happens only once a year or so.
 
 #### Debian
-Get required libraries and tools:
+Get the required libraries and tools:
 ```bash
 sudo apt-get install build-essential pkg-config libvlccore-dev libvlc-dev
 ```
@@ -176,6 +177,37 @@ sudo make install
 Then follow [the usage instructions](#usage) below on how to enable the plugin.
 
 If these build instructions don't work for you (perhaps you are using a non-Debian-derived Linux distribution), [there are more generic build instructions available](/BUILD.md).
+
+#### Fedora
+We assume you are using VLC from RPM Fusion repositories and have the `rpmfusion-free` repository [enabled in dnf](https://docs.fedoraproject.org/en-US/quick-docs/setup_rpmfusion/) (should show up in `dnf repolist`).
+
+Get the required libraries and tools:
+```bash
+sudo dnf install gcc make pkgconf-pkg-config vlc-devel
+```
+
+Get the latest release of the plugin:
+```bash
+sudo dnf install git-core
+git clone https://github.com/nurupo/vlc-pause-click-plugin
+cd vlc-pause-click-plugin
+git checkout \
+  "$(git tag --list | grep -P '^(\d+).(\d+).(\d+)$' | \
+    sed "s/\./ /g" | \
+    sort -snk3,3 | sort -snk2,2 | sort -snk1,1 | \
+    tail -n 1 | \
+    sed 's/ /\./g')"
+```
+
+(Or alternatively download [the latest release's tarball](https://github.com/nurupo/vlc-pause-click-plugin/releases/latest), extract it and cd into it)
+
+Build and install:
+```bash
+make
+sudo make install
+```
+
+Then follow [the usage instructions](#usage) below on how to enable the plugin.
 
 #### Arch Linux
 There is [`vlc-pause-click-plugin` package](https://aur.archlinux.org/packages/vlc-pause-click-plugin/) available in the AUR repository.
