@@ -189,12 +189,31 @@ If someone could figure that out and contribute their findings - that would be v
 [This Snap VLC discussion](https://github.com/nurupo/vlc-pause-click-plugin/issues/33) might be useful.
 
 ## Usage
-1. Restart VLC to load the newly added plugin [[screenshot]](http://i.imgur.com/G2QAK17.png)
-2. Go into advanced preferences: Tools -> Preferences -> Show settings -> All [[screenshot]](http://i.imgur.com/QqORpID.png) [[screenshot]](http://i.imgur.com/RWLYX5g.png)
-3. Enable the plugin with a checkbox: (in advanced preferences) Interface -> Control Interfaces -> Pause/Play video on mouse click [[screenshot]](http://i.imgur.com/m9yF5Px.png)
-4. Enable the plugin with a checkbox: (in advanced preferences) Video -> Filters -> Pause/Play video on mouse click [[screenshot]](http://i.imgur.com/OZLqmI6.png)
-5. Change the plugin settings however you like: (in advanced preferences) Video -> Filters -> Pause click [[screenshot]](http://i.imgur.com/Kdrekks.png)
-6. Restart VLC for settings to take place [[screenshot]](http://i.imgur.com/G2QAK17.png)
+1. <details open=true><summary>Restart VLC to load the newly added plugin</summary>
+
+   ![screenshot](http://i.imgur.com/G2QAK17.png)
+   </details>
+2. <details open=true><summary>Go into advanced preferences: Tools -> Preferences -> Show settings -> All</summary>
+
+   ![screenshot](http://i.imgur.com/QqORpID.png)
+   ![screenshot](http://i.imgur.com/RWLYX5g.png)
+   </details>
+3. <details open=true><summary>Enable the plugin with a checkbox: (in advanced preferences) Interface -> Control Interfaces -> Pause/Play video on mouse click</summary>
+
+   ![screenshot](http://i.imgur.com/m9yF5Px.png)
+   </details>
+4. <details open=true><summary>Enable the plugin with a checkbox: (in advanced preferences) Video -> Filters -> Pause/Play video on mouse click</summary>
+
+   ![screenshot](http://i.imgur.com/OZLqmI6.png)
+   </details>
+5. <details open=true><summary>Change the plugin settings however you like: (in advanced preferences) Video -> Filters -> Pause click</summary>
+
+   ![screenshot](http://i.imgur.com/Kdrekks.png)
+   </details>
+6. <details open=true><summary>Restart VLC for settings to take place</summary>
+
+   ![screenshot](http://i.imgur.com/G2QAK17.png)
+   </details>
 7. Play a video
 8. Click on the video picture to pause/play the video
 
