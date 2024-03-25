@@ -135,7 +135,7 @@ flatpak install "runtime/org.videolan.VLC.Plugin.pause_click/$ARCH/$BRANCH"
 If the correct plugin extension branch is installed, you should see `Extension: runtime/org.videolan.VLC.Plugin.pause_click/$ARCH/$BRANCH` listed in the output of:
 
 ```bash
-flatpak info flatpak info --show-extensions org.videolan.VLC
+flatpak info --show-extensions org.videolan.VLC
 ```
 
 If you do not have the correct plugin extension branch installed, there will be no `Extension: runtime/org.videolan.VLC.Plugin.pause_click` listed in there.
