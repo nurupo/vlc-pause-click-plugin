@@ -166,11 +166,10 @@ vlc_module_begin()
                  "<p>"
                  "v" VERSION_STRING "<br>"
                  "Copyright " VERSION_COPYRIGHT
-                 "</p><p>"
+                 "</p>"
+                 "<p>"
                  "Homepage: <a href=\"" VERSION_HOMEPAGE "\">" VERSION_HOMEPAGE "</a><br>"
-                 "Donate: <a href=\"https://www.paypal.com/donate?hosted_button_id=9HJHAH5UDL3GL\">PayPal</a>, "
-                         "<a href=\"https://github.com/sponsors/nurupo\">GitHub Sponsors</a>, "
-                         "<a href=\"bitcoin:34qxFsZjs1ZWVBwer11gXiycpv7QHTA8q3?label=nurupo&message=Donation+for+vlc-pause-click-plugin\">Bitcoin</a>"
+                 "Donate: <a href=\"https://github.com/nurupo/donate/blob/master/README.md#donate\">https://github.com/nurupo/donate</a>"
                  "</p>"))
     set_section(N_("General"), NULL)
     _add_integer(MOUSE_BUTTON_CFG, MOUSE_BUTTON_DEFAULT,
