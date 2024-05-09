@@ -120,13 +120,13 @@ elif [ "$TARGET_OS" = "macos" ]; then
       sed -i "" "s|^prefix=.*|prefix=$PWD|g" lib/pkgconfig/*.pc
       export PKG_CONFIG_PATH="${PWD}/lib/pkgconfig"
       cd ../..
-      make OS=macOS CC="$CC"
+      make OS=macOS CC="$CC -Werror=partial-availability -Wl,-no_weak_imports"
       echo "$LATEST_MACOS_DIR_URL" > VLC_DOWNLOAD_URL.txt
       mv libpause_click_plugin.dylib VLC_DOWNLOAD_URL.txt "sdk/$ARCH"
       make clean
     }
-    build "intel64" "https://artifacts.videolan.org/vlc/nightly-macos-x86_64/" "cc"
-    build "arm64"   "https://artifacts.videolan.org/vlc/nightly-macos-arm64/"  "cc -target arm64-apple-macos10.11"
+    build "intel64" "https://artifacts.videolan.org/vlc/nightly-macos-x86_64/" "cc -target x86_64-apple-macos10.11 -mmacos-version-min=10.11"
+    build "arm64"   "https://artifacts.videolan.org/vlc/nightly-macos-arm64/"  "cc -target arm64-apple-macos11     -mmacos-version-min=11"
     lipo "sdk/intel64/libpause_click_plugin.dylib" "sdk/arm64/libpause_click_plugin.dylib" -create -output libpause_click_plugin.dylib
     echo "$NIGHTLY_README" > README.txt
     echo "intel64: $(cat "sdk/intel64/VLC_DOWNLOAD_URL.txt")" >> README.txt
@@ -178,13 +178,13 @@ elif [ "$TARGET_OS" = "macos" ]; then
       ln -sf libvlccore.*.dylib libvlccore.dylib
       cd ..
       cd ../..
-      make OS=macOS CC="$CC"
+      make OS=macOS CC="$CC -Werror=partial-availability -Wl,-no_weak_imports"
       mv libpause_click_plugin.dylib "sdk/$ARCH"
       make clean
     }
-    build "intel64" "https://download.videolan.org/pub/videolan/vlc/$VLC_VERSION.0/macosx/vlc-$VLC_VERSION.0.dmg" "cc"
+    build "intel64" "https://download.videolan.org/pub/videolan/vlc/$VLC_VERSION.0/macosx/vlc-$VLC_VERSION.0.dmg" "cc -target x86_64-apple-macos10.11 -mmacos-version-min=10.11"
     # VLC 3.0.13 is the first universal macOS VLC version
-    build "arm64"   "https://download.videolan.org/pub/videolan/vlc/3.0.13/macosx/vlc-3.0.13-universal.dmg"       "cc -target arm64-apple-macos10.11"
+    build "arm64"   "https://download.videolan.org/pub/videolan/vlc/3.0.13/macosx/vlc-3.0.13-universal.dmg"       "cc -target arm64-apple-macos11     -mmacos-version-min=11"
     lipo "sdk/intel64/libpause_click_plugin.dylib" "sdk/arm64/libpause_click_plugin.dylib" -create -output libpause_click_plugin.dylib
     mkdir artifacts
     zip -j artifacts/vlc-$VLC_VERSION-macosx-universal.zip libpause_click_plugin.dylib
@@ -213,7 +213,7 @@ elif [ "$TARGET_OS" = "macos" ]; then
     ln -sf libvlccore.*.dylib libvlccore.dylib
     cd ..
     cd ../..
-    make OS=macOS
+    make OS=macOS CC="cc -target x86_64-apple-macos10.11 -mmacos-version-min=10.11 -Werror=partial-availability -Wl,-no_weak_imports"
 
     mkdir artifacts
     zip -j artifacts/vlc-$VLC_VERSION-macosx-intel64.zip libpause_click_plugin.dylib
