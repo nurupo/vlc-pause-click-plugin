@@ -297,16 +297,18 @@ There are several possible workarounds:
 
 ### It works for videos but not for audio-only files
 
-That's not a bug, that's the expected behavior due to how the plugin and VLC work.
+That's not a bug in the plugin, that's the expected behavior due to how VLC works.
+It's a limitation of VLC.
 
-To know when a user clicks their mouse, the plugin implements the video filter interface of VLC, which allows it to react on mouse clicks done on the video surface/image.
+To know when a user clicks their mouse, the plugin implements the video filter plugin interface of VLC, which allows it to react on mouse clicks done on the video surface/image.
+That's the only way for a plugin to detect mouse clicks, VLC doesn't provide any other way to do that.
 When playing audio-only files, VLC doesn't create any video surface and thus doesn't load any of video filter plugins, so the plugin simply doesn't get loaded and can't react to mouse clicks.
 
 There is, however, a creative way to make the plugin work on audio-only files -- enable an audio visualization via Audio -> Visualizations menu.
 Enabling an audio visualization will force VLC to create a video surface for the visualization and load the plugin.
-Now, if you click on the visualization, the audio should pause.
+Now, if you click on the visualization image, the audio should pause.
 All visualizations seem to work aside from the 3D spectrum one.
-If you are on Linux, depending on how VLC is packaged in your distribution, you might need to install an additional package to enable audio visualizations, despite them already being listed in the GUI (e.g. `vlc-plugin-visualization` package in Debian).
+If you are on Linux, depending on how VLC is packaged in your distribution, you might need to install an additional package to enable audio visualizations, despite them already being listed in the GUI (e.g. `vlc-plugin-visualization` package on Debian).
 
 ## License
 LGPL-2.1-or-later
