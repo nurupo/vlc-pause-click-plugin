@@ -154,7 +154,7 @@ vlc_module_begin()
 // 6f68f894986e11e3f6215f6c2c25e5c0a3139429
 // 94e23d51bb91cff1c14ef1079193920f04f48fd1
 #if LIBVLC_VERSION_MAJOR >= 4
-    set_callback_video_filter(OpenFilter)
+    set_callback_video_filter((vlc_filter_open) OpenFilter)
 #else
     set_category(CAT_VIDEO)
     set_callbacks(OpenFilter, CloseFilter)
@@ -583,7 +583,7 @@ static const struct vlc_filter_operations filter_ops =
 {
     .filter_video = filter,
     .video_mouse = _mouse,
-    .close = CloseFilter,
+    .close = (void (*)(filter_t *)) CloseFilter,
 };
 #endif
 
