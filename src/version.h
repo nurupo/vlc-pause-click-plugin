@@ -1,7 +1,7 @@
 /*****************************************************************************
  * version.h : Version and software information
  *****************************************************************************
- * Copyright (C) 2014-2023 Maxim Biro
+ * Copyright (C) 2014-2025 Maxim Biro
  *
  * Authors: Maxim Biro <nurupo.contributions@gmail.com>
  *
@@ -29,7 +29,7 @@
 #define VERSION_IS_RELEASE 0
 
 #define VERSION_AUTHOR    "Maxim Biro (nurupo)"
-#define VERSION_COPYRIGHT "(C) 2014-2023 " VERSION_AUTHOR
+#define VERSION_COPYRIGHT "(C) 2014-2025 " VERSION_AUTHOR
 #define VERSION_LICENSE   "LGPL-2.1-or-later"
 #define VERSION_HOMEPAGE  "https://github.com/nurupo/vlc-pause-click-plugin"
 
